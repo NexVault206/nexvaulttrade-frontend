@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Investment Plans | NexVaultTrade</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #0B0F16;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 24px 24px 100px;
+        }
+
+        .plan-container {
+            max-width: 1100px;
+            width: 100%;
+            background: #121924;
+            border-radius: 40px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .plan-screen {
+            padding: 28px 30px 34px;
+        }
+
+        /* header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .page-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #F1F5F9;
+            letter-spacing: -0.3px;
+        }
+        .page-title span {
+            color: #FFD966;
+        }
+        .balance-chip {
+            background: #0E1620;
+            border: 1px solid #2A3F54;
+            border-radius: 60px;
+            padding: 8px 20px;
+            font-size: 0.85rem;
+            color: #FFE3A3;
+            font-weight: 600;
+        }
+        .balance-chip i {
+            margin-right: 8px;
+            color: #6FCF97;
+        }
+
+        /* plan grid */
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .plan-card {
+            background: #0E1520;
+            border-radius: 28px;
+            padding: 24px 22px 28px;
+            border: 2px solid #1E2C3A;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .plan-card:hover {
+            transform: translateY(-4px);
+            border-color: #3A5C7A;
+        }
+        .plan-card.selected {
+            border-color: #6FCF97;
+            box-shadow: 0 0 0 3px rgba(111, 207, 151, 0.25);
+            background: #111E2A;
+        }
+        .plan-card.selected .plan-select-badge {
+            opacity: 1;
+        }
+        .plan-select-badge {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: #2A6B4E;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .plan-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+        .plan-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+        .plan-range {
+            font-size: 0.85rem;
+            color: #C4D9F0;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        .plan-duration {
+            font-size: 0.8rem;
+            color: #8AA9CC;
+            margin-bottom: 14px;
+        }
+        .plan-duration i {
+            margin-right: 6px;
+            color: #FFD966;
+        }
+        .plan-tag {
+            display: inline-block;
+            background: #1A2A38;
+            border-radius: 60px;
+            padding: 4px 14px;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: #BDD9FF;
+            letter-spacing: 0.3px;
+        }
+
+        /* selected plan detail area */
+        .selected-plan-area {
+            background: #0D151F;
+            border-radius: 32px;
+            border: 1px solid #253440;
+            padding: 24px 28px;
+            display: none;
+            margin-top: 8px;
+        }
+        .selected-plan-area.visible {
+            display: block;
+        }
+
+        .selected-plan-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .selected-plan-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .selected-plan-icon {
+            font-size: 2.2rem;
+        }
+        .selected-plan-details {
+            color: white;
+        }
+        .selected-plan-details .name {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .selected-plan-details .meta {
+            font-size: 0.75rem;
+            color: #9AB7D8;
+            margin-top: 2px;
+        }
+
+        .deposit-input-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .deposit-input-group label {
+            font-size: 0.85rem;
+            color: #B9D4F0;
+            font-weight: 500;
+        }
+        .deposit-input {
+            background: #0A111C;
+            border: 1px solid #2A4056;
+            border-radius: 60px;
+            padding: 12px 20px;
+            width: 200px;
+            font-size: 1rem;
+            color: white;
+            outline: none;
+            font-weight: 500;
+        }
+        .deposit-input:focus {
+            border-color: #5B8BB4;
+        }
+        .deposit-input::placeholder {
+            color: #4F6F8F;
+        }
+        .range-hint {
+            font-size: 0.7rem;
+            color: #6C8EB0;
+        }
+
+        .btn-deposit {
+            background: linear-gradient(95deg, #1F6E43, #0F4C2D);
+            border: none;
+            padding: 12px 34px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-deposit:active {
+            transform: scale(0.97);
+        }
+        .btn-deposit:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* responsive */
+        @media (max-width: 600px) {
+            .plan-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .plan-card {
+                padding: 18px 16px 22px;
+            }
+            .plan-icon {
+                font-size: 1.5rem;
+            }
+            .plan-name {
+                font-size: 1rem;
+            }
+            .deposit-input {
+                width: 140px;
+            }
+            .selected-plan-area {
+                padding: 18px 18px;
+            }
+        }
+        @media (max-width: 420px) {
+            .plan-grid {
+                grid-template-columns: 1fr;
+            }
+            .page-title {
+                font-size: 1.3rem;
+            }
+            .deposit-input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .deposit-input {
+                width: 100%;
+            }
+            .btn-deposit {
+                width: 100%;
+            }
+        }
+
+        /* bottom nav (matching profile) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 1100px;
+            background: #0F1720;
+            padding: 12px 28px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #232F3C;
+            border-radius: 24px 24px 0 0;
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: #6E8EB0;
+            font-size: 0.7rem;
+            font-weight: 500;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .nav-item i {
+            font-size: 1.4rem;
+        }
+        .nav-item.active {
+            color: #3E9FEF;
+        }
+        .nav-item span {
+            font-size: 0.7rem;
+        }
+        .nav-item:hover {
+            color: #9DC6FF;
+        }
+
+        .toast-msg {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1F2A33;
+            backdrop-filter: blur(12px);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            z-index: 1000;
+            transition: 0.2s;
+            font-weight: 500;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        .deposit-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        .deposit-modal-overlay.active {
+            display: flex;
+        }
+        .deposit-modal {
+            background: #131A24;
+            border-radius: 40px;
+            max-width: 480px;
+            width: 100%;
+            padding: 32px 30px 30px;
+            border: 1px solid #2D4054;
+        }
+        .deposit-modal h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+        .deposit-modal .sub {
+            color: #8AA9CC;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+        .deposit-modal .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #1F2C3A;
+            color: #CBDDE8;
+            font-size: 0.9rem;
+        }
+        .deposit-modal .detail-row:last-child {
+            border-bottom: none;
+        }
+        .deposit-modal .detail-row .label {
+            color: #8AA9CC;
+        }
+        .deposit-modal .detail-row .value {
+            font-weight: 600;
+            color: #FFE3A3;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 14px;
+            margin-top: 24px;
+        }
+        .modal-actions button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 60px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .modal-actions .cancel-btn {
+            background: #1F2A36;
+            color: #B9D4F0;
+        }
+        .modal-actions .confirm-btn {
+            background: linear-gradient(95deg, #1F6E43, #0F4C2D);
+            color: white;
+        }
+        .modal-actions button:active {
+            transform: scale(0.97);
+        }
+
+        /* badge colors per plan */
+        .plan-card[data-plan="starter"] .plan-tag { background: #2A3E4C; color: #B0D0E8; }
+        .plan-card[data-plan="bronze"] .plan-tag { background: #4A3A2A; color: #F0C8A0; }
+        .plan-card[data-plan="silver"] .plan-tag { background: #3A404A; color: #D0D8E8; }
+        .plan-card[data-plan="gold"] .plan-tag { background: #4A3A20; color: #FFD98C; }
+        .plan-card[data-plan="platinum"] .plan-tag { background: #2A3850; color: #A8D4FF; }
+    </style>
+</head>
+<body>
+
+<div class="plan-container" id="planApp">
+    <div class="plan-screen">
+        <!-- Header -->
+        <div class="page-header">
+            <button class="back-btn" onclick="window.location.href='nexvaulttrade_dashboard.html'" style="background:#1A2530;border:none;color:#fff;padding:8px 16px;border-radius:40px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </button>
+            <div class="page-title">📈 Invest <span>Plans</span></div>
+            <div class="balance-chip" id="balanceChip">
+                <i class="fas fa-wallet"></i> <span id="userBalanceDisplay">$0.00</span>
+            </div>
+        </div>
+        <!-- Plan Grid -->
+        <div class="plan-grid" id="planGrid"></div>
+
+        <!-- Selected Plan Area (hidden until selection) -->
+        <div class="selected-plan-area" id="selectedArea">
+            <div class="selected-plan-row">
+                <div class="selected-plan-info">
+                    <div class="selected-plan-icon" id="selectedIcon"></div>
+                    <div class="selected-plan-details">
+                        <div class="name" id="selectedName">Starter Plan</div>
+                        <div class="meta" id="selectedMeta">7 Days · Beginner-friendly</div>
+                    </div>
+                </div>
+                <div class="deposit-input-group">
+                    <label>Amount ($)</label>
+                    <input type="number" class="deposit-input" id="depositAmount" placeholder="Min" step="1" min="0">
+                    <span class="range-hint" id="rangeHint">Min $50</span>
+                    <button class="btn-deposit" id="depositBtn">Deposit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Deposit Confirmation Modal -->
+<div class="deposit-modal-overlay" id="depositModal">
+    <div class="deposit-modal">
+        <h3>Confirm Deposit</h3>
+        <div class="sub">You are about to invest in the following plan</div>
+        <div class="detail-row"><span class="label">Plan</span><span class="value" id="modalPlanName">Starter Plan</span></div>
+        <div class="detail-row"><span class="label">Amount</span><span class="value" id="modalAmount">$0.00</span></div>
+        <div class="detail-row"><span class="label">Duration</span><span class="value" id="modalDuration">7 Days</span></div>
+        <div class="detail-row"><span class="label">Expected Returns</span><span class="value" id="modalReturns">—</span></div>
+        <div class="modal-actions">
+            <button class="cancel-btn" id="modalCancel">Cancel</button>
+            <button class="confirm-btn" id="modalConfirm">Confirm &amp; Deposit</button>
+        </div>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="nexvaulttrade_dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="nexvaulttrade_deposit.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposit</span></a>
+    <a href="nexvaulttrade_withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
+    <a href="nexvaulttrade_plans.html" class="nav-item active"><i class="fas fa-chart-pie"></i><span>Plans</span></a>
+    <a href="nexvaulttrade_actions.html" class="nav-item"><i class="fas fa-cogs"></i><span>Actions</span></a>
+    <a href="nexvaulttrade_history.html" class="nav-item"><i class="fas fa-clock"></i><span>History</span></a>
+    <a href="nexvaulttrade_profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+</nav>
+
+<script>
+    // ---------- PLAN DATA ----------
+    const plans = [
+        {
+            id: 'starter',
+            name: 'Starter plan',
+            icon: '?',
+            minDeposit: 50,
+            maxDeposit: 499,
+            duration: 7,
+            tag: 'Beginner-friendly',
+            color: '#B0D0E8'
+        },
+        {
+            id: 'bronze',
+            name: 'Bronze Plan',
+            icon: '?',
+            minDeposit: 500,
+            maxDeposit: 1999,
+            duration: 14,
+            tag: 'Moderate investment period',
+            color: '#F0C8A0'
+        },
+        {
+            id: 'silver',
+            name: 'Silver Plan',
+            icon: '',
+            minDeposit: 2000,
+            maxDeposit: 4999,
+            duration: 21,
+            tag: 'Balanced portfolio',
+            color: '#D0D8E8'
+        },
+        {
+            id: 'gold',
+            name: 'Gold Plan',
+            icon: '?',
+            minDeposit: 5000,
+            maxDeposit: 9999,
+            duration: 30,
+            tag: 'Premium features',
+            color: '#FFD98C'
+        },
+        {
+            id: 'platinum',
+            name: 'Platinum Plan',
+            icon: '?',
+            minDeposit: 10000,
+            maxDeposit: Infinity,
+            duration: 45,
+            tag: 'Elite exclusive',
+            color: '#A8D4FF'
+        }
+    ];
+   // ---------- STATE ----------
+    let selectedPlanId = null;
+    let userBalance = 0;
+    let depositAmount = '';
+
+    // Load user balance from localStorage (simulate)
+    function loadUserBalance() {
+        const stored = localStorage.getItem('nexvault_balance');
+        if (stored !== null && !isNaN(parseFloat(stored))) {
+            userBalance = parseFloat(stored);
+        } else {
+            // fallback: try from users array if admin panel was used
+            const users = JSON.parse(localStorage.getItem('nexvault_users') || '[]');
+            const currentUser = users.find(u => u.id === 1);
+            if (currentUser) {
+                userBalance = currentUser.balance || 0;
+            }
+        }
+        // also check if we have a current user balance from the withdrawal page
+        const bal = localStorage.getItem('user_balance_usd');
+        if (bal !== null && !isNaN(parseFloat(bal))) {
+            userBalance = parseFloat(bal);
+        }
+        document.getElementById('userBalanceDisplay').textContent = '$' + userBalance.toFixed(2);
+    }
+
+    // ---------- RENDER PLANS ----------
+    function renderPlans() {
+        const grid = document.getElementById('planGrid');
+        grid.innerHTML = '';
+        plans.forEach(plan => {
+            const card = document.createElement('div');
+            card.className = 'plan-card' + (selectedPlanId === plan.id ? ' selected' : '');
+            card.setAttribute('data-plan', plan.id);
+            const maxDisplay = plan.maxDeposit === Infinity ? '∞' : '$' + plan.maxDeposit.toLocaleString();
+            card.innerHTML = `
+                <div class="plan-select-badge"><i class="fas fa-check"></i></div>
+                <div class="plan-icon">${plan.icon}</div>
+                <div class="plan-name">${plan.name}</div>
+                <div class="plan-range">$${plan.minDeposit.toLocaleString()} – ${maxDisplay}</div>
+                <div class="plan-duration"><i class="fas fa-calendar-alt"></i> ${plan.duration} Days</div>
+                <span class="plan-tag">${plan.tag}</span>
+            `;
+            card.addEventListener('click', () => selectPlan(plan.id));
+            grid.appendChild(card);
+        });
+    }
+
+    // ---------- SELECT PLAN ----------
+    function selectPlan(planId) {
+        selectedPlanId = planId;
+        const plan = plans.find(p => p.id === planId);
+        if (!plan) return;
+
+        // update cards
+        document.querySelectorAll('.plan-card').forEach(c => {
+            c.classList.toggle('selected', c.getAttribute('data-plan') === planId);
+        });
+
+        // show selected area
+        const area = document.getElementById('selectedArea');
+        area.classList.add('visible');
+
+        // populate selected info
+        document.getElementById('selectedIcon').textContent = plan.icon;
+        document.getElementById('selectedName').textContent = plan.name;
+        document.getElementById('selectedMeta').textContent = `${plan.duration} Days · ${plan.tag}`;
+
+        const maxDisplay = plan.maxDeposit === Infinity ? '∞' : plan.maxDeposit.toLocaleString();
+        document.getElementById('rangeHint').textContent = `Min $${plan.minDeposit} – $${maxDisplay}`;
+
+        // set input placeholder & min
+        const input = document.getElementById('depositAmount');
+        input.placeholder = `$${plan.minDeposit} – ${maxDisplay}`;
+        input.min = plan.minDeposit;
+        input.value = '';
+        depositAmount = '';
+        updateDepositButton();
+    }
+
+    // ---------- DEPOSIT AMOUNT VALIDATION ----------
+    function updateDepositButton() {
+        const input = document.getElementById('depositAmount');
+        const btn = document.getElementById('depositBtn');
+        const val = parseFloat(input.value);
+        const plan = plans.find(p => p.id === selectedPlanId);
+        if (!plan) {
+            btn.disabled = true;
+            return;
+        }
+        if (!isNaN(val) && val >= plan.minDeposit && val <= plan.maxDeposit) {
+            btn.disabled = false;
+            depositAmount = val;
+        } else {
+            btn.disabled = true;
+            depositAmount = null;
+        }
+        // also check if user has enough balance
+        if (!isNaN(val) && val > userBalance) {
+            btn.disabled = true;
+            btn.textContent = 'Insufficient Balance';
+            setTimeout(() => { btn.textContent = 'Deposit'; }, 1500);
+        } else {
+            btn.textContent = 'Deposit';
+        }
+    }
+  
+    // ---------- SHOW TOAST ----------
+    function showToast(msg, isError = false) {
+        const existing = document.querySelector('.toast-msg');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.innerText = msg;
+        if (isError) toast.style.background = '#6B2A2A';
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 2500);
+    }
+
+    // ---------- DEPOSIT MODAL ----------
+    function openDepositModal() {
+        const plan = plans.find(p => p.id === selectedPlanId);
+        if (!plan) return;
+        const amount = parseFloat(document.getElementById('depositAmount').value);
+        if (isNaN(amount) || amount < plan.minDeposit || amount > plan.maxDeposit) {
+            showToast('Please enter a valid amount within the plan range.', true);
+            return;
+        }
+        if (amount > userBalance) {
+            showToast('Insufficient balance. Please top up your wallet.', true);
+            return;
+        }
+
+        document.getElementById('modalPlanName').textContent = plan.name;
+        document.getElementById('modalAmount').textContent = '$' + amount.toFixed(2);
+        document.getElementById('modalDuration').textContent = plan.duration + ' Days';
+        // Simple return calculation: 10% return for demo
+        const returnRate = 0.10; // 10% flat for demo
+        const returns = amount * returnRate;
+        document.getElementById('modalReturns').textContent = '$' + returns.toFixed(2) + ' (est. 10%)';
+
+        document.getElementById('depositModal').classList.add('active');
+    }
+
+    function closeDepositModal() {
+        document.getElementById('depositModal').classList.remove('active');
+    }
+
+    function confirmDeposit() {
+        const plan = plans.find(p => p.id === selectedPlanId);
+        if (!plan) return;
+        const amount = parseFloat(document.getElementById('depositAmount').value);
+        if (isNaN(amount) || amount > userBalance) {
+            showToast('Insufficient balance.', true);
+            closeDepositModal();
+            return;
+        }
+
+        // Deduct balance
+        userBalance -= amount;
+        localStorage.setItem('nexvault_balance', userBalance);
+        // update user in users array if exists
+        const users = JSON.parse(localStorage.getItem('nexvault_users') || '[]');
+        const currentUser = users.find(u => u.id === 1);
+        if (currentUser) {
+            currentUser.balance = userBalance;
+            localStorage.setItem('nexvault_users', JSON.stringify(users));
+        }
+        localStorage.setItem('user_balance_usd', userBalance);
+
+        document.getElementById('userBalanceDisplay').textContent = '$' + userBalance.toFixed(2);
+        closeDepositModal();
+        showToast(`✅ Deposit of $${amount.toFixed(2)} into ${plan.name} successful!`);
+
+        // Reset selection
+        selectedPlanId = null;
+        document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+        document.getElementById('selectedArea').classList.remove('visible');
+        document.getElementById('depositAmount').value = '';
+        updateDepositButton();
+    }
+
+    // ---------- EVENT BINDING ----------
+    document.addEventListener('DOMContentLoaded', () => {
+        loadUserBalance();
+        renderPlans();
+
+        // deposit input listener
+        document.getElementById('depositAmount').addEventListener('input', updateDepositButton);
+
+        // deposit button
+        document.getElementById('depositBtn').addEventListener('click', openDepositModal);
+
+        // modal controls
+        document.getElementById('modalCancel').addEventListener('click', closeDepositModal);
+        document.getElementById('modalConfirm').addEventListener('click', confirmDeposit);
+        document.getElementById('depositModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeDepositModal();
+        });
+
+        // bottom nav is now real <a> links, no JS needed
+
+        // pre-select first plan?
+        // selectPlan('starter');
+    });
+
+    // also expose for inline
+    window.selectPlan = selectPlan;
+</script>
+
+</body>
+</html>
+        
+  

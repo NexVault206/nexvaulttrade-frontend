@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — NexVaultTrade</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0A0E17;--bg2:#0F1624;--card:#131A2C;--border:#1E293B;--text:#EFF3FC;--text2:#94A3B8;--accent:#D4AF37;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;padding:16px 16px 40px;}
+
+/* LOGIN */
+.login-wrap{max-width:400px;margin:80px auto;background:var(--card);border-radius:32px;padding:40px;border:1px solid var(--border);}
+.login-wrap h2{margin-bottom:24px;color:var(--accent);}
+input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:30px;padding:14px 18px;color:var(--text);font-size:1rem;outline:none;margin-bottom:12px;}
+input:focus{border-color:var(--accent);}
+.btn{width:100%;background:var(--accent);color:#0A0E17;border:none;border-radius:30px;padding:14px;font-weight:700;font-size:1rem;cursor:pointer;margin-top:8px;}
+.btn:disabled{opacity:0.5;}
+.btn-red{background:#ef4444;color:white;}
+.btn-green{background:#22c55e;color:white;}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
+
+/* PANEL */
+.panel{display:none;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 0;margin-bottom:16px;border-bottom:1px solid var(--border);}
+.logo{font-weight:800;font-size:1.1rem;color:var(--accent);}
+.tabs{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;}
+.tab{padding:10px 18px;border-radius:20px;cursor:pointer;font-weight:600;font-size:0.85rem;border:1px solid var(--border);background:var(--card);color:var(--text2);white-space:nowrap;}
+.tab.active{background:var(--accent);color:#0A0E17;border-color:var(--accent);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* CARDS */
+.user-card{background:var(--card);border-radius:20px;padding:16px;margin-bottom:12px;border:1px solid var(--border);}
+.user-name{font-weight:700;margin-bottom:4px;}
+.user-email{color:var(--text2);font-size:0.85rem;margin-bottom:8px;}
+.user-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:0.85rem;}
+.stat{background:var(--bg2);padding:6px 12px;border-radius:12px;}
+.stat span{color:var(--accent);font-weight:700;}
+.actions{display:flex;gap:8px;flex-wrap:wrap;}
+.action-btn{padding:8px 14px;border-radius:20px;border:none;cursor:pointer;font-size:0.8rem;font-weight:600;}
+.action-btn.green{background:#1a2a1a;color:#22c55e;}
+.action-btn.red{background:#2a1515;color:#ef4444;}
+.action-btn.yellow{background:#2a2a1a;color:#f59e0b;}
+.action-btn.blue{background:#1a1f2c;color:#60a5fa;}
+.bal-input{width:120px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;color:var(--text);font-size:0.85rem;outline:none;}
+.bal-input:focus{border-color:var(--accent);}
+
+/* TX CARDS */
+.tx-card{background:var(--card);border-radius:20px;padding:16px;margin-bottom:12px;border:1px solid var(--border);}
+.tx-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.tx-user{font-weight:700;}
+.tx-amount{font-size:1.1rem;font-weight:800;color:var(--accent);}
+.tx-detail{color:var(--text2);font-size:0.85rem;margin-bottom:12px;}
+.badge{display:inline-block;padding:3px 10px;border-radius:10px;font-size:0.75rem;font-weight:600;}
+.badge.pending{background:#2a2a1a;color:#f59e0b;}
+.badge.approved{background:#1a2a1a;color:#22c55e;}
+.badge.rejected{background:#2a1515;color:#ef4444;}
+
+/* MSG */
+.msg-card{background:var(--card);border-radius:20px;padding:16px;margin-bottom:12px;border:1px solid var(--border);}
+.msg-subject{font-weight:700;margin-bottom:4px;}
+.msg-body{color:var(--text2);font-size:0.85rem;margin-bottom:8px;}
+.msg-meta{color:var(--text2);font-size:0.75rem;}
+
+.empty{text-align:center;padding:40px;color:var(--text2);}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1a1f2c;color:var(--text);padding:12px 24px;border-radius:30px;border:1px solid var(--accent);z-index:9999;display:none;}
+.loading{text-align:center;padding:20px;color:var(--text2);}
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.stats-bar .s{background:var(--card);border-radius:16px;padding:14px;text-align:center;border:1px solid var(--border);}
+.stats-bar .s .val{font-size:1.3rem;font-weight:800;color:var(--accent);}
+.stats-bar .s .lbl{font-size:0.7rem;color:var(--text2);margin-top:4px;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-wrap" id="loginScreen">
+  <div style="text-align:center;margin-bottom:24px;">
+    <div style="background:var(--accent);color:#0A0E17;width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;margin:0 auto 12px;">N</div>
+    <h2>Admin Panel</h2>
+    <p style="color:var(--text2);font-size:0.85rem;">NexVaultTrade Administration</p>
+  </div>
+  <input type="email" id="adminEmail" placeholder="Admin Email">
+  <input type="password" id="adminPassword" placeholder="Password">
+  <div id="loginError" style="color:#ef4444;font-size:0.85rem;margin-bottom:8px;display:none;"></div>
+  <button class="btn" id="loginBtn" onclick="adminLogin()">Login to Admin Panel</button>
+  <button class="btn btn-outline" style="margin-top:8px;" onclick="window.location.href='nexvaulttrade_dashboard.html'">← Back to Dashboard</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="panel" id="adminPanel">
+  <div class="header">
+    <div class="logo">⚡ Admin Panel</div>
+    <div style="display:flex;gap:8px;">
+      <button class="action-btn blue" onclick="loadAll()"><i class="fas fa-refresh"></i> Refresh</button>
+      <button class="action-btn red" onclick="adminLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="s"><div class="val" id="statUsers">0</div><div class="lbl">Users</div></div>
+    <div class="s"><div class="val" id="statPending">0</div><div class="lbl">Pending</div></div>
+    <div class="s"><div class="val" id="statWithdrawals">0</div><div class="lbl">Withdrawals</div></div>
+    <div class="s"><div class="val" id="statMessages">0</div><div class="lbl">Messages</div></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('users', this)">👥 Users</div>
+    <div class="tab" onclick="switchTab('deposits', this)">⬇ Deposits</div>
+    <div class="tab" onclick="switchTab('withdrawals', this)">⬆ Withdrawals</div>
+    <div class="tab" onclick="switchTab('messages', this)">✉ Messages</div>
+  </div>
+
+  <div class="tab-content active" id="tab-users">
+    <div id="usersList"><div class="loading">Loading users...</div></div>
+  </div>
+  <div class="tab-content" id="tab-deposits">
+    <div id="depositsList"><div class="loading">Loading deposits...</div></div>
+  </div>
+  <div class="tab-content" id="tab-withdrawals">
+    <div id="withdrawalsList"><div class="loading">Loading withdrawals...</div></div>
+  </div>
+  <div class="tab-content" id="tab-messages">
+    <div id="messagesList"><div class="loading">Loading messages...</div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ── SUPABASE SETUP ──────────────────────────────────────────────
+const SUPABASE_URL = 'https://vysinfcvhbluqaozerhu.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5c2luZmN2aGJsdXFhb3plcmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzY0MjcsImV4cCI6MjA5NzkxMjQyN30.Q-jWKEBT_sizilXUn9vF7G7qsGWFlSbIAR40HpwaiX8';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── SESSION CHECK ON LOAD ───────────────────────────────────────
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    const { data: profile } = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+    if (profile && profile.role === 'admin') { showPanel(); loadAll(); }
+    else { await sb.auth.signOut(); }
+  }
+})();
+
+function showPanel() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+}
+
+// ── LOGIN ───────────────────────────────────────────────────────
+async function adminLogin() {
+  const email = document.getElementById('adminEmail').value.trim();
+  const pwd   = document.getElementById('adminPassword').value;
+  const btn   = document.getElementById('loginBtn');
+  const err   = document.getElementById('loginError');
+  err.style.display = 'none';
+  if (!email || !pwd) { err.textContent = 'Please enter email and password.'; err.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Logging in...';
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd });
+    if (error) { err.textContent = error.message; err.style.display = 'block'; return; }
+    const { data: profile } = await sb.from('profiles').select('role').eq('id', data.user.id).single();
+    if (!profile || profile.role !== 'admin') {
+      await sb.auth.signOut();
+      err.textContent = 'Access denied. Not an admin account.';
+      err.style.display = 'block'; return;
+    }
+    showPanel(); loadAll();
+  } catch(e) {
+    err.textContent = 'Unexpected error. Try again.'; err.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Login to Admin Panel';
+  }
+}
+
+// ── LOGOUT ──────────────────────────────────────────────────────
+async function adminLogout() {
+  await sb.auth.signOut();
+  window.location.reload();
+}
+
+// ── TABS ────────────────────────────────────────────────────────
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+function loadAll() { loadUsers(); loadDeposits(); loadWithdrawals(); loadMessages(); }
+
+// ── USERS ───────────────────────────────────────────────────────
+async function loadUsers() {
+  try {
+    const { data: users, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    document.getElementById('statUsers').textContent = users.length;
+    if (!users.length) { document.getElementById('usersList').innerHTML = '<div class="empty">No users yet</div>'; return; }
+    document.getElementById('usersList').innerHTML = users.map(u => `
+      <div class="user-card">
+        <div class="user-name">${u.full_name || u.email} ${u.is_verified ? '✅' : '⚠️'}</div>
+        <div class="user-email">${u.email}</div>
+        <div class="user-stats">
+          <div class="stat">Balance: <span>$${(u.balance||0).toFixed(2)}</span></div>
+          <div class="stat">Joined: <span>${new Date(u.created_at).toLocaleDateString()}</span></div>
+          <div class="stat">Role: <span>${u.role || 'user'}</span></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+          <input class="bal-input" type="number" id="bal_${u.id}" value="${(u.balance||0).toFixed(2)}" placeholder="New balance">
+          <button class="action-btn blue" onclick="setBalance('${u.id}')">Set Balance</button>
+        </div>
+        <div class="actions">
+          <button class="action-btn ${u.is_verified ? 'red' : 'green'}" onclick="toggleVerify('${u.id}', ${!u.is_verified})">${u.is_verified ? 'Unverify' : 'Verify'}</button>
+          <button class="action-btn red" onclick="deleteUser('${u.id}', '${u.full_name || u.email}')">Delete</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { document.getElementById('usersList').innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+async function setBalance(userId) {
+  const val = parseFloat(document.getElementById(`bal_${userId}`).value);
+  if (isNaN(val)) { showToast('Enter a valid amount'); return; }
+  const { error } = await sb.from('profiles').update({ balance: val }).eq('id', userId);
+  if (error) { showToast('Error: ' + error.message); return; }
+  showToast('Balance updated ✅'); loadUsers();
+}
+
+async function toggleVerify(userId, state) {
+  const { error } = await sb.from('profiles').update({ is_verified: state }).eq('id', userId);
+  if (error) { showToast('Error: ' + error.message); return; }
+  showToast(state ? 'User verified ✅' : 'User unverified'); loadUsers();
+}
+
+async function deleteUser(userId, name) {
+  if (!confirm(`Delete ${name}? This cannot be undone.`)) return;
+  const { error } = await sb.from('profiles').delete().eq('id', userId);
+  if (error) { showToast('Error: ' + error.message); return; }
+  showToast('User deleted'); loadUsers();
+}
+
+// ── DEPOSITS ────────────────────────────────────────────────────
+async function loadDeposits() {
+  try {
+    const { data, error } = await sb.from('transactions')
+      .select('*, profiles(full_name, email)')
+      .eq('type', 'deposit')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    const pending = data.filter(d => d.status === 'pending');
+    document.getElementById('statPending').textContent = pending.length;
+    if (!data.length) { document.getElementById('depositsList').innerHTML = '<div class="empty">No deposits yet</div>'; return; }
+    document.getElementById('depositsList').innerHTML = data.map(d => `
+      <div class="tx-card">
+        <div class="tx-header">
+          <div class="tx-user">${d.profiles?.full_name || 'Unknown'}</div>
+          <div class="tx-amount">$${(d.amount||0).toFixed(2)}</div>
+        </div>
+        <div class="tx-detail">
+          ${d.profiles?.email || ''} • ${d.method || '—'} • ${new Date(d.created_at).toLocaleDateString()}
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span class="badge ${d.status}">${d.status}</span>
+          ${d.status === 'pending' ? `
+            <button class="action-btn green" onclick="approveDeposit('${d.id}', '${d.user_id}', ${d.amount})">✅ Approve</button>
+            <button class="action-btn red" onclick="updateTxStatus('${d.id}', 'rejected', 'depositsList', loadDeposits)">❌ Reject</button>
+          ` : ''}
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { document.getElementById('depositsList').innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+async function approveDeposit(txId, userId, amount) {
+  // Update transaction status
+  const { error: txErr } = await sb.from('transactions').update({ status: 'approved' }).eq('id', txId);
+  if (txErr) { showToast('Error: ' + txErr.message); return; }
+  // Add amount to user balance
+  const { data: profile } = await sb.from('profiles').select('balance').eq('id', userId).single();
+  const newBalance = (profile?.balance || 0) + amount;
+  await sb.from('profiles').update({ balance: newBalance }).eq('id', userId);
+  showToast('Deposit approved ✅ Balance updated!'); loadDeposits(); loadUsers();
+}
+
+// ── WITHDRAWALS ─────────────────────────────────────────────────
+async function loadWithdrawals() {
+  try {
+    const { data, error } = await sb.from('transactions')
+      .select('*, profiles(full_name, email)')
+      .eq('type', 'withdrawal')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    document.getElementById('statWithdrawals').textContent = data.filter(w => w.status === 'pending').length;
+    if (!data.length) { document.getElementById('withdrawalsList').innerHTML = '<div class="empty">No withdrawals yet</div>'; return; }
+    document.getElementById('withdrawalsList').innerHTML = data.map(w => `
+      <div class="tx-card">
+        <div class="tx-header">
+          <div class="tx-user">${w.profiles?.full_name || 'Unknown'}</div>
+          <div class="tx-amount">$${(w.amount||0).toFixed(2)}</div>
+        </div>
+        <div class="tx-detail">
+          ${w.profiles?.email || ''}<br>
+          Method: ${w.method || '—'} • Address: <span style="color:var(--accent);word-break:break-all;">${w.wallet_address || '—'}</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="badge ${w.status}">${w.status}</span>
+          ${w.status === 'pending' ? `
+            <button class="action-btn green" onclick="approveWithdrawal('${w.id}')">✅ Approve</button>
+            <button class="action-btn red" onclick="rejectWithdrawal('${w.id}', '${w.user_id}', ${w.amount})">❌ Reject & Refund</button>
+          ` : ''}
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { document.getElementById('withdrawalsList').innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+async function approveWithdrawal(txId) {
+  const { error } = await sb.from('transactions').update({ status: 'approved' }).eq('id', txId);
+  if (error) { showToast('Error: ' + error.message); return; }
+  showToast('Withdrawal approved ✅'); loadWithdrawals();
+}
+
+async function rejectWithdrawal(txId, userId, amount) {
+  const { error } = await sb.from('transactions').update({ status: 'rejected' }).eq('id', txId);
+  if (error) { showToast('Error: ' + error.message); return; }
+  // Refund balance
+  const { data: profile } = await sb.from('profiles').select('balance').eq('id', userId).single();
+  const newBalance = (profile?.balance || 0) + amount;
+  await sb.from('profiles').update({ balance: newBalance }).eq('id', userId);
+  showToast('Withdrawal rejected. Balance refunded ✅'); loadWithdrawals();
+}
+
+// ── MESSAGES ────────────────────────────────────────────────────
+async function loadMessages() {
+  try {
+    const { data, error } = await sb.from('admin_messages')
+      .select('*, profiles(full_name, email)')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    document.getElementById('statMessages').textContent = data.length;
+    if (!data.length) { document.getElementById('messagesList').innerHTML = '<div class="empty">No messages yet</div>'; return; }
+    document.getElementById('messagesList').innerHTML = data.map(m => `
+      <div class="msg-card" style="${m.read ? 'opacity:0.6' : ''}">
+        <div class="msg-subject">${m.subject || 'No subject'} ${!m.read ? '<span style="background:#D4AF37;color:#0A0E17;padding:2px 8px;border-radius:10px;font-size:0.7rem;">NEW</span>' : ''}</div>
+        <div class="msg-body">${m.message}</div>
+        <div class="msg-meta">${m.profiles?.full_name || ''} (${m.profiles?.email || ''}) • ${new Date(m.created_at).toLocaleDateString()}</div>
+      </div>
+    `).join('');
+  } catch(e) { document.getElementById('messagesList').innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
+}
+
+// ── TOAST ───────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+// Enter key login
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') adminLogin();
+});
+</script>
+</body>
+</html>

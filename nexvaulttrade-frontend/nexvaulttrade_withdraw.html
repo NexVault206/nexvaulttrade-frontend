@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Withdrawal | NexVaultTrade</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #0B0F16;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 20px 100px;
+        }
+
+        /* main card */
+        .withdrawal-container {
+            max-width: 620px;
+            width: 100%;
+            background: #121924;
+            border-radius: 40px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .screen {
+            padding: 28px 26px 34px;
+        }
+
+        /* Balance header */
+        .balance-header {
+            background: #0E151F;
+            border-radius: 32px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            border: 1px solid #202D3C;
+        }
+
+        .greeting {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #CBD5E6;
+            margin-bottom: 12px;
+        }
+
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+
+        .total-balance {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #FFE3A3;
+            letter-spacing: -0.3px;
+        }
+
+        .lock-badge {
+            background: #2E1E28;
+            color: #FF8A7A;
+            padding: 6px 14px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .percentage-change {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: #87A9CE;
+        }
+
+        /* step progress */
+        .steps-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .step-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-circle {
+            width: 48px;
+            height: 48px;
+            background: #1F2C3A;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #A0BBDA;
+            transition: 0.2s;
+            border: 1px solid #31475E;
+        }
+
+        .step-circle.active {
+            background: #2E6A4E;
+            color: white;
+            border-color: #6FCF97;
+            box-shadow: 0 0 0 3px rgba(111,207,151,0.3);
+        }
+
+        .step-circle.completed {
+            background: #1F6E48;
+            color: white;
+            border-color: #A3F0C0;
+        }
+
+        .step-circle.completed i {
+            font-size: 1.2rem;
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #97B1CF;
+        }
+
+        .step-label.active-label {
+            color: #EFF6FF;
+            font-weight: 600;
+        }
+
+        /* form card */
+        .form-card {
+            background: #0D151F;
+            border-radius: 28px;
+            padding: 24px;
+            margin: 8px 0 24px;
+            border: 1px solid #263340;
+        }
+
+        .method-toggle {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .method-option {
+            flex: 1;
+            background: #1A2632;
+            border-radius: 60px;
+            padding: 12px 0;
+            text-align: center;
+            font-weight: 600;
+            color: #B7D0F0;
+            cursor: pointer;
+            border: 1px solid #304252;
+            transition: 0.2s;
+        }
+
+        .method-option.active-method {
+            background: #2C5680;
+            color: white;
+            border-color: #5F9FD0;
+        }
+
+        .input-field {
+            margin-bottom: 18px;
+        }
+
+        .input-field label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #A7C0DF;
+            margin-bottom: 6px;
+        }
+
+        .input-field input, .input-field select {
+            width: 100%;
+            background: #0A111A;
+            border: 1px solid #2B3F54;
+            border-radius: 60px;
+            padding: 14px 18px;
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .input-field input:focus {
+            border-color: #5B8BB4;
+        }
+
+        .amount-input {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .submit-btn {
+            background: linear-gradient(95deg, #1F6E43, #0F4C2D);
+            width: 100%;
+            border: none;
+            padding: 14px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: white;
+            margin-top: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.97);
+        }
+
+        .error-msg {
+            background: #401E2C;
+            border-left: 5px solid #FF6B6B;
+            padding: 14px 18px;
+            border-radius: 24px;
+            color: #FFBFBF;
+            font-size: 0.8rem;
+            margin: 20px 0;
+        }
+
+        .success-msg {
+            background: #1C3D2F;
+            border-left: 5px solid #6FCF97;
+            padding: 14px;
+            border-radius: 24px;
+            color: #C0F0D0;
+        }
+
+        .timer-block {
+            background: #0A121E;
+            border-radius: 28px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .timer-digits {
+            font-size: 2.4rem;
+            font-weight: 800;
+            font-family: monospace;
+            background: #1C2A38;
+            display: inline-block;
+            padding: 8px 24px;
+            border-radius: 60px;
+            color: #6BCB9E;
+            letter-spacing: 2px;
+        }
+
+        .admin-note {
+            font-size: 0.7rem;
+            color: #7B98BB;
+            margin-top: 12px;
+        }
+
+        .upgrade-tier-btn {
+            background: #3D5C7A;
+            margin-top: 12px;
+            border: none;
+            padding: 10px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .inline-button {
+            background: #2C4A6E;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 30px;
+            color: white;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        hr {
+            margin: 18px 0;
+            border-color: #253241;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 620px;
+            background: #121924;
+            border-top: 1px solid #253241;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 8px;
+            border-radius: 24px 24px 0 0;
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            color: #6E8EB0;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 12px;
+            transition: 0.2s;
+            min-width: 44px;
+        }
+        .nav-item i { font-size: 20px; }
+        .nav-item.active, .nav-item:hover { color: #D4AF37; }
+    </style>
+</head>
+<body>
+<div class="withdrawal-container" id="withdrawApp"></div>
+
+<nav class="bottom-nav">
+    <a href="nexvaulttrade_dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="nexvaulttrade_deposit.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposit</span></a>
+    <a href="nexvaulttrade_withdraw.html" class="nav-item active"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
+    <a href="nexvaulttrade_plans.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Plans</span></a>
+    <a href="nexvaulttrade_actions.html" class="nav-item"><i class="fas fa-cogs"></i><span>Actions</span></a>
+    <a href="nexvaulttrade_history.html" class="nav-item"><i class="fas fa-clock"></i><span>History</span></a>
+    <a href="nexvaulttrade_profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+</nav>
+
+<script>
+    // ---------- STATE ----------
+    let userBalance = 14023.15;      // USD / EUR style
+    let isTierUpgraded = false;      // if false → first withdrawal triggers lock & error
+    let isBalanceLocked = false;      // shows "LOCKED" red on balance, prevents new withdrawal until upgrade
+    let withdrawalInProgress = false; // true while inside flow (steps 1-4)
+    
+    // Flow data
+    let currentStep = 0;   // 0: initiation, 1: submit details, 2: verifying details, 3: processing withdrawal
+    let selectedMethod = 'bank';   // 'bank' or 'crypto'
+    let withdrawalAmount = '';
+    let bankDetails = { bankName: '', accountNumber: '', holderName: '' };
+    let cryptoAddress = '';
+    
+    // timers
+    let verifyTimer = null;
+    let processingTimer = null;
+    let processingEndTime = null;
+    let processingInterval = null;
+    
+    // used to track if verification step was auto-completed
+    let isVerifying = false;
+    
+    const appContainer = document.getElementById('withdrawApp');
+    
+    // Helper: format money
+    function formatMoney(amount) {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(amount);
+    }
+    
+    // load/save tier upgrade from localStorage (persist)
+    function loadPersistent() {
+        const savedTier = localStorage.getItem('nexvault_tier_upgraded');
+        if (savedTier !== null) isTierUpgraded = savedTier === 'true';
+        const savedLock = localStorage.getItem('nexvault_balance_locked');
+        if (savedLock !== null) isBalanceLocked = savedLock === 'true';
+        const savedBalance = localStorage.getItem('nexvault_balance');
+        if (savedBalance !== null && !isNaN(parseFloat(savedBalance))) userBalance = parseFloat(savedBalance);
+    }
+    
+    function saveTierStatus() {
+        localStorage.setItem('nexvault_tier_upgraded', isTierUpgraded);
+        if (!isTierUpgraded && isBalanceLocked) {
+            // keep lock if still not upgraded
+        }
+        localStorage.setItem('nexvault_balance_locked', isBalanceLocked);
+        localStorage.setItem('nexvault_balance', userBalance);
+    }
+    
+    // Upgrade tier: unlocks balance, removes lock, allows new withdrawals
+    function upgradeTier() {
+        isTierUpgraded = true;
+        isBalanceLocked = false;
+        saveTierStatus();
+        // if we are currently in a failed state (after timer ended with lock), refresh UI
+        if (currentStep === 3 && !withdrawalInProgress && !processingEndTime) {
+            // show success message after upgrade
+            render();
+        } else {
+            render();
+        }
+    }
+    
+    // reset full withdrawal flow (clear timers, reset steps)
+    function resetFlow(keepLockStatus = false) {
+        if (verifyTimer) clearTimeout(verifyTimer);
+        if (processingInterval) clearInterval(processingInterval);
+        if (processingTimer) clearTimeout(processingTimer);
+        verifyTimer = null;
+        processingInterval = null;
+        processingTimer = null;
+        processingEndTime = null;
+        isVerifying = false;
+        withdrawalInProgress = false;
+        currentStep = 0;
+        // reset form data but preserve method selection maybe
+        withdrawalAmount = '';
+        bankDetails = { bankName: '', accountNumber: '', holderName: '' };
+        cryptoAddress = '';
+        render();
+    }
+    
+    // start step 2 (submit details) manually after initiation
+    function initiateWithdrawal() {
+        if (isBalanceLocked) {
+            alert("Your balance is locked due to pending verification. Upgrade your tier to continue.");
+            return;
+        }
+        if (withdrawalInProgress) return;
+        withdrawalInProgress = true;
+        currentStep = 1; // go to submit details
+        render();
+    }
+    
+    // validate details step form
+    function validateSubmitDetails() {
+        const amountNum = parseFloat(withdrawalAmount);
+        if (isNaN(amountNum) || amountNum <= 0) return { valid: false, error: 'Please enter a valid amount' };
+        if (amountNum > userBalance) return { valid: false, error: `Insufficient balance. Available: ${formatMoney(userBalance)}` };
+        if (amountNum < 10) return { valid: false, error: 'Minimum withdrawal amount is $10.00' };
+        if (selectedMethod === 'bank') {
+            if (!bankDetails.bankName.trim()) return { valid: false, error: 'Bank name required' };
+            if (!bankDetails.accountNumber.trim()) return { valid: false, error: 'Account number required' };
+            if (!bankDetails.holderName.trim()) return { valid: false, error: 'Account holder name required' };
+        } else {
+            if (!cryptoAddress.trim()) return { valid: false, error: 'Wallet address required' };
+        }
+        return { valid: true, amount: amountNum };
+    }
+    
+    // when user clicks "Submit Details" from step1
+    function onSubmitDetails() {
+        const validation = validateSubmitDetails();
+        if (!validation.valid) {
+            alert(validation.error);
+            return;
+        }
+        // move to verifying details step (auto)
+        currentStep = 2;
+        render();
+        // start verification simulation (30 sec)
+        isVerifying = true;
+        verifyTimer = setTimeout(() => {
+            // verification successful
+            isVerifying = false;
+            currentStep = 3; // processing withdrawal
+            render();
+            startProcessingWithdrawal(validation.amount);
+        }, 30000); // 30 seconds verification
+        // update UI every second to show countdown? optional but we show message
+        let interval = setInterval(() => {
+            if (currentStep !== 2 || !isVerifying) {
+                clearInterval(interval);
+            } else {
+                render(); // refresh to show verification message
+            }
+        }, 500);
+    }
+    
+    // start 30min processing countdown
+    function startProcessingWithdrawal(amount) {
+        const durationMs = 30 * 60 * 1000;
+        processingEndTime = Date.now() + durationMs;
+        processingInterval = setInterval(() => {
+            if (!processingEndTime || currentStep !== 3) {
+                if (processingInterval) clearInterval(processingInterval);
+                return;
+            }
+            const remaining = processingEndTime - Date.now();
+            if (remaining <= 0) {
+                clearInterval(processingInterval);
+                processingInterval = null;
+                // Timer finished: check tier upgrade status
+                if (!isTierUpgraded) {
+                    // transaction failed → show red error, lock balance, set lock flag
+                    isBalanceLocked = true;
+                    saveTierStatus();
+                    withdrawalInProgress = false;
+                    currentStep = 3; // stay on processing step but show error + lock
+                    render();
+                } else {
+                    // Tier upgraded → withdrawal success, deduct balance
+                    const amountNum = parseFloat(withdrawalAmount);
+                    if (!isNaN(amountNum) && userBalance >= amountNum) {
+                        userBalance -= amountNum;
+                        saveTierStatus();
+                        // success: reset flow and show success message
+                        withdrawalInProgress = false;
+                        currentStep = 0; // back to start
+                        render();
+                        alert(`✅ Withdrawal of ${formatMoney(amountNum)} completed successfully! Funds will arrive shortly.`);
+                    } else {
+                        alert("Error: insufficient balance or amount invalid.");
+                        resetFlow();
+                    }
+                }
+                return;
+            }
+            render(); // update timer display
+        }, 1000);
+        render();
+    }
+    
+    // render dynamic UI
+    function render() {
+        if (!appContainer) return;
+        const balanceDisplay = formatMoney(userBalance);
+        const lockedClass = isBalanceLocked ? 'lock-badge' : '';
+        const lockedText = isBalanceLocked ? '🔒 LOCKED' : '';
+        
+        let stepStatus = [0,0,0,0]; // 0: pending, 1: active, 2: completed
+        if (currentStep === 0) stepStatus[0] = 1;
+        else if (currentStep === 1) { stepStatus[0] = 2; stepStatus[1] = 1; }
+        else if (currentStep === 2) { stepStatus[0] = 2; stepStatus[1] = 2; stepStatus[2] = 1; }
+        else if (currentStep === 3) { stepStatus[0] = 2; stepStatus[1] = 2; stepStatus[2] = 2; stepStatus[3] = 1; }
+        
+        const steps = [
+            { label: "Withdrawal initiation", icon: "fa-solid fa-play" },
+            { label: "Submit details", icon: "fa-regular fa-pen-to-square" },
+            { label: "Verifying details", icon: "fa-solid fa-circle-check" },
+            { label: "Processing withdrawal", icon: "fa-solid fa-clock" }
+        ];
+        
+        let content = '';
+                // header with balance
+        let headerHtml = `
+            <div class="balance-header">
+                <div class="greeting">Hello👋</div>
+                <div class="balance-row">
+                    <span class="total-balance">${balanceDisplay}</span>
+                    ${isBalanceLocked ? `<span class="lock-badge"><i class="fas fa-lock"></i> LOCKED</span>` : ''}
+                </div>
+                <div class="percentage-change">🔒 (4%) Last Week</div>
+                ${isBalanceLocked && !isTierUpgraded ? `<div class="error-msg" style="margin-top: 12px; font-size:0.75rem;"><i class="fas fa-exclamation-triangle"></i> Balance locked: tier upgrade required</div>` : ''}
+            </div>
+        `;
+        
+        // steps indicator
+        let stepsHtml = `<div class="steps-wrapper">`;
+        steps.forEach((step, idx) => {
+            let circleClass = 'step-circle';
+            if (stepStatus[idx] === 2) circleClass += ' completed';
+            else if (stepStatus[idx] === 1) circleClass += ' active';
+            let labelClass = 'step-label';
+            if (stepStatus[idx] === 1) labelClass += ' active-label';
+            let inner = stepStatus[idx] === 2 ? `<i class="fas fa-check"></i>` : `<span>${idx+1}</span>`;
+            stepsHtml += `
+                <div class="step-item">
+                    <div class="${circleClass}">${inner}</div>
+                    <div class="${labelClass}">${step.label}</div>
+                </div>
+            `;
+        });
+        stepsHtml += `</div>`;
+        
+        // main content based on step
+        let mainHtml = '';
+        if (currentStep === 0) {
+            // initiation step
+            mainHtml = `
+                <div class="form-card">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <i class="fas fa-hand-holding-usd" style="font-size: 2.5rem; color: #6FCF97;"></i>
+                        <p style="margin-top: 10px; color: #B9D0F0;">You can withdraw crypto or fiat with your preferred method.</p>
+                    </div>
+                    <button class="submit-btn" id="initiateBtn"><i class="fas fa-arrow-right"></i> Initiate Withdrawal</button>
+                </div>
+            `;
+        } 
+        else if (currentStep === 1) {
+            // submit details: method selection + forms
+            const isBankActive = selectedMethod === 'bank';
+            mainHtml = `
+                <div class="form-card">
+                    <div class="method-toggle">
+                        <div class="method-option ${isBankActive ? 'active-method' : ''}" data-method="bank">🏦 Bank Transfer</div>
+                        <div class="method-option ${!isBankActive ? 'active-method' : ''}" data-method="crypto">🪙 Crypto Wallet</div>
+                    </div>
+                    <div class="input-field">
+                        <label>Amount (USD)</label>
+                        <input type="number" id="amountInput" class="amount-input" placeholder="Min $10" value="${withdrawalAmount}" step="10">
+                    </div>
+                    ${isBankActive ? `
+                        <div class="input-field">
+                            <label>Bank Name</label>
+                            <input type="text" id="bankName" placeholder=", " value="${bankDetails.bankName}">
+                        </div>
+                        <div class="input-field">
+                            <label>Account Number</label>
+                            <input type="text" id="accountNumber" placeholder="Account number" value="${bankDetails.accountNumber}">
+                        </div>
+                        <div class="input-field">
+                            <label>Account Holder Name</label>
+                            <input type="text" id="holderName" placeholder="Full name" value="${bankDetails.holderName}">
+                        </div>
+                    ` : `
+                        <div class="input-field">
+                            <label>Wallet Address (BTC, USDT, ETH, etc.)</label>
+                            <input type="text" id="cryptoAddress" placeholder="Enter wallet address" value="${cryptoAddress}">
+                        </div>
+                    `}
+                    <button class="submit-btn" id="submitDetailsBtn">Submit Details</button>
+                </div>
+            `;
+        }
+        else if (currentStep === 2) {
+            // verifying details (auto countdown)
+            mainHtml = `
+                <div class="form-card" style="text-align: center;">
+                    <i class="fas fa-spinner fa-pulse" style="font-size: 2rem; color: #FFD966; margin-bottom: 16px;"></i>
+                    <h4 style="color: white;">Verifying your withdrawal details</h4>
+                    <p style="color: #9BB7D6; font-size: 0.85rem; margin-top: 8px;">Please wait, we are validating the information...</p>
+                    <div class="admin-note" style="margin-top: 20px;"><i class="fas fa-shield-alt"></i> Estimated time: ~30 seconds</div>
+                </div>
+            `;
+        }
+        else if (currentStep === 3) {
+            // processing withdrawal with timer OR error if timer ended + not upgraded
+            const timerActive = processingEndTime && processingEndTime > Date.now();
+            let timerDisplay = '';
+            if (timerActive) {
+                const remaining = processingEndTime - Date.now();
+                const minutes = Math.floor(remaining / 60000);
+                const seconds = Math.floor((remaining % 60000) / 1000);
+                timerDisplay = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+            }
+            
+            if (!isTierUpgraded && !timerActive && processingEndTime && processingEndTime <= Date.now()) {
+                // transaction failed scenario -> show red error, lock
+                mainHtml = `
+                    <div class="error-msg" style="background: #521E2E;">
+                        <i class="fas fa-exclamation-circle"></i> Transaction failed. 
+                        <strong>Additional verification is required to upgrade your account tier and restore full access to your account.</strong>
+                    </div>
+                    <div class="balance-header" style="background:#1A1020;">
+                        <div class="balance-row">
+                            <span class="total-balance">${balanceDisplay}</span>
+                            <span class="lock-badge"><i class="fas fa-lock"></i> LOCKED</span>
+                        </div>
+                        <p style="color:#FFA098; font-size:0.75rem; margin-top: 8px;">Upgrade your tier to unlock withdrawals</p>
+                    </div>
+                   
+                    <button class="inline-button" id="resetFlowBtn" style="margin-top: 12px; width:100%;">Back to start</button>
+                `;
+            } 
+            else if (!timerActive && !processingEndTime && !isTierUpgraded && isBalanceLocked) {
+                // fallback if lock persistent
+                mainHtml = `
+                    <div class="error-msg">
+                        <i class="fas fa-lock"></i> Balance locked due to tier restriction. Upgrade to continue.
+                    </div>
+                    <button class="upgrade-tier-btn" id="upgradeTierBtn">Upgrade Tier (Verify Account)</button>
+                    <button class="inline-button" id="resetFlowBtn">Reset</button>
+                `;
+            }
+            else if (timerActive) {
+                mainHtml = `
+                    <div class="timer-block">
+                        <i class="fas fa-hourglass-half" style="font-size: 1.5rem; color: #9BC0E8;"></i>
+                        <div style="margin: 10px 0 12px; font-weight: 600;">Admin is processing withdrawal</div>
+                        <div class="timer-digits">${timerDisplay}</div>
+                        <div class="admin-note">⏳ Estimated 30 minutes for confirmation</div>
+                    </div>
+                    <div class="info-message" style="background:#1E2A38; padding:12px; border-radius:24px; font-size:0.75rem;">
+                        <i class="fas fa-clock"></i> Please do not close the page. After timer finishes, withdrawal will be finalized.
+                    </div>
+                    <button class="inline-button" id="cancelProcessingBtn" style="margin-top: 16px;">Cancel Withdrawal</button>
+                `;
+            }
+            else if (isTierUpgraded && (!processingEndTime || processingEndTime <= Date.now())) {
+                // withdrawal success scenario (tier upgraded and timer completed)
+                mainHtml = `
+                    <div class="success-msg">
+                        <i class="fas fa-check-circle"></i> Withdrawal completed! Funds have been sent. You may start a new withdrawal.
+                    </div>
+                    <button class="submit-btn" id="newWithdrawalBtn">Make New Withdrawal</button>
+                `;
+            }
+            else {
+                // default processing screen with no active timer but tier upgraded?
+                mainHtml = `<div class="form-card">Processing status unknown. <button id="resetFlowBtn">Reset</button></div>`;
+            }
+        }
+        // assemble full screen
+        let fullHtml = `
+            <div class="screen">
+                ${headerHtml}
+                ${stepsHtml}
+                ${mainHtml}
+                <hr>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                    <span style="font-size:0.7rem; color:#7A99BC;"><i class="fas fa-shield-alt"></i> Secure withdrawals</span>
+                    <button id="adminUpgradeBtn" style="background:#1E3348; border:none; padding:6px 12px; border-radius:60px; color:#B9D9FF; font-size:0.7rem; cursor:pointer;"><i class="fas fa-gem"></i> Admin: Upgrade Tier</button>
+                </div>
+            </div>
+        `;
+        
+        appContainer.innerHTML = fullHtml;
+        attachEvents();
+    }
+    
+    function attachEvents() {
+        // Step 0: Initiate
+        const initiateBtn = document.getElementById('initiateBtn');
+        if (initiateBtn) initiateBtn.addEventListener('click', () => initiateWithdrawal());
+        
+        // Step 1: method switch + inputs
+        const methodBank = document.querySelector('[data-method="bank"]');
+        const methodCrypto = document.querySelector('[data-method="crypto"]');
+        if (methodBank) methodBank.addEventListener('click', () => { selectedMethod = 'bank'; render(); });
+        if (methodCrypto) methodCrypto.addEventListener('click', () => { selectedMethod = 'crypto'; render(); });
+        
+        const amountInput = document.getElementById('amountInput');
+        if (amountInput) amountInput.addEventListener('input', (e) => { withdrawalAmount = e.target.value; });
+        const bankNameInput = document.getElementById('bankName');
+        if (bankNameInput) bankNameInput.addEventListener('input', (e) => { bankDetails.bankName = e.target.value; });
+        const accountNumberInput = document.getElementById('accountNumber');
+        if (accountNumberInput) accountNumberInput.addEventListener('input', (e) => { bankDetails.accountNumber = e.target.value; });
+        const holderNameInput = document.getElementById('holderName');
+        if (holderNameInput) holderNameInput.addEventListener('input', (e) => { bankDetails.holderName = e.target.value; });
+        const cryptoAddrInput = document.getElementById('cryptoAddress');
+        if (cryptoAddrInput) cryptoAddrInput.addEventListener('input', (e) => { cryptoAddress = e.target.value; });
+        
+        const submitDetails = document.getElementById('submitDetailsBtn');
+        if (submitDetails) submitDetails.addEventListener('click', () => onSubmitDetails());
+        
+        // upgrade tier buttons (admin and generic)
+        const upgradeBtn = document.getElementById('upgradeTierBtn');
+        if (upgradeBtn) upgradeBtn.addEventListener('click', () => { upgradeTier(); render(); });
+        const adminUpgrade = document.getElementById('adminUpgradeBtn');
+        if (adminUpgrade) adminUpgrade.addEventListener('click', () => { upgradeTier(); render(); });
+        
+        const resetFlowBtn = document.getElementById('resetFlowBtn');
+        if (resetFlowBtn) resetFlowBtn.addEventListener('click', () => resetFlow());
+        
+        const cancelProcessing = document.getElementById('cancelProcessingBtn');
+        if (cancelProcessing) cancelProcessing.addEventListener('click', () => {
+            if (confirm('Cancel current withdrawal? The timer will be stopped.')) {
+                if (processingInterval) clearInterval(processingInterval);
+                processingEndTime = null;
+                withdrawalInProgress = false;
+                currentStep = 0;
+                render();
+            }
+        });
+        
+        const newWithdrawalBtn = document.getElementById('newWithdrawalBtn');
+        if (newWithdrawalBtn) newWithdrawalBtn.addEventListener('click', () => resetFlow());
+    }
+    
+    // init
+    loadPersistent();
+    // if lock is active because of previous failed withdrawal, show initial step accordingly
+    if (isBalanceLocked && !isTierUpgraded) {
+        // nothing else, but render properly
+    }
+    render();
+</script>
+</body>
+</html>
+
+  

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>CryptoDeposit | Select Wallet & Add Assets</title>
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- Font Awesome Icons (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #0B0E15;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 20px 100px;
+        }
+
+        /* Main app container – card style */
+        .app-container {
+            max-width: 500px;
+            width: 100%;
+            background: #131A24;
+            border-radius: 32px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            backdrop-filter: blur(0px);
+            transition: all 0.2s;
+        }
+
+        /* inner padding */
+        .screen {
+            padding: 24px 22px 32px;
+        }
+
+        /* headers */
+        .screen-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .back-btn {
+            background: #1E2A36;
+            border: none;
+            color: #9BB6D0;
+            width: 38px;
+            height: 38px;
+            border-radius: 40px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-btn:hover {
+            background: #2A3A48;
+            color: white;
+        }
+        .screen-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: #F1F5F9;
+        }
+
+        /* Add crypto button (first screen) */
+        .add-crypto-btn {
+            background: linear-gradient(105deg, #2B6E9E 0%, #1E4A6E 100%);
+            border: none;
+            width: 100%;
+            padding: 18px 0;
+            border-radius: 70px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            margin-top: 32px;
+            transition: 0.2s;
+            box-shadow: 0 6px 14px rgba(0,20,40,0.4);
+        }
+        .add-crypto-btn i {
+            font-size: 1.3rem;
+        }
+        .add-crypto-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* currency grid */
+        .currency-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 560px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .currency-item {
+            background: #1C2630;
+            border-radius: 20px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #2A3844;
+        }
+        .currency-item:hover {
+            background: #25323e;
+            border-color: #3F5568;
+            transform: translateX(3px);
+        }
+        .currency-icon {
+            width: 48px;
+            height: 48px;
+            background: #0F1720;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #FFD966;
+        }
+        .currency-info h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+        }
+        .currency-info p {
+            font-size: 0.8rem;
+            color: #8EA3BB;
+            margin-top: 4px;
+        }
+
+        /* Deposit details */
+        .deposit-card {
+            background: #0F171F;
+            border-radius: 28px;
+            padding: 20px;
+            margin-top: 8px;
+            border: 1px solid #25313e;
+        }
+        .qr-wrapper {
+            background: white;
+            padding: 12px;
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            margin: 18px 0 16px;
+        }
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #qrcode img, #qrcode canvas {
+            width: 160px;
+            height: 160px;
+            display: block;
+            border-radius: 18px;
+        }
+        .or-divider {
+            text-align: center;
+            color: #6E8BB0;
+            font-size: 0.85rem;
+            margin: 14px 0 10px;
+            font-weight: 500;
+        }
+        .address-box {
+            background: #081018;
+            padding: 14px 16px;
+            border-radius: 20px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #B9D0F0;
+            border: 1px solid #253440;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+        .address-text {
+            flex: 1;
+            letter-spacing: 0.3px;
+        }
+        .copy-icon {
+            background: #1E2F3C;
+            padding: 8px;
+            border-radius: 40px;
+            color: #A0C0E0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .copy-icon:hover {
+            background: #2F4455;
+            color: white;
+        }
+        .min-details {
+            display: flex;
+            justify-content: space-between;
+            background: #0C151E;
+            padding: 14px 16px;
+            border-radius: 20px;
+            margin: 16px 0 12px;
+            font-size: 0.9rem;
+        }
+        .min-label {
+            color: #8BA1BE;
+        }
+        .min-value {
+            font-weight: 600;
+            color: #F0F4FA;
+        }
+        .share-btn, .payment-btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            margin-top: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .share-btn {
+            background: #1D2A35;
+            color: #BBD6FF;
+            border: 1px solid #344B60;
+        }
+        .payment-btn {
+            background: linear-gradient(95deg, #1F6E43, #0F4C2D);
+            color: white;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.3);
+        }
+        .payment-btn:active {
+            transform: scale(0.97);
+        }
+        .note-arrival {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6C89A6;
+            margin-top: 12px;
+        }
+        hr {
+            border-color: #25313e;
+            margin: 12px 0;
+        }
+        /* scroll */
+        .currency-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+        .currency-grid::-webkit-scrollbar-track {
+            background: #1a232e;
+            border-radius: 10px;
+        }
+        .currency-grid::-webkit-scrollbar-thumb {
+            background: #3F5A75;
+            border-radius: 10px;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 500px;
+            background: #131A24;
+            border-top: 1px solid #25313e;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 8px;
+            border-radius: 24px 24px 0 0;
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            color: #6E8EB0;
+            cursor: pointer;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 12px;
+            transition: 0.2s;
+            min-width: 44px;
+        }
+        .nav-item i { font-size: 20px; }
+        .nav-item.active, .nav-item:hover { color: #D4AF37; }
+    </style>
+</head>
+<body>
+<div class="app-container" id="appRoot">
+    <!-- dynamic screens injected via JS -->
+</div>
+
+<nav class="bottom-nav">
+    <a href="nexvaulttrade_dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="nexvaulttrade_deposit.html" class="nav-item active"><i class="fas fa-arrow-down"></i><span>Deposit</span></a>
+    <a href="nexvaulttrade_withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
+    <a href="nexvaulttrade_plans.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Plans</span></a>
+    <a href="nexvaulttrade_actions.html" class="nav-item"><i class="fas fa-cogs"></i><span>Actions</span></a>
+    <a href="nexvaulttrade_history.html" class="nav-item"><i class="fas fa-clock"></i><span>History</span></a>
+    <a href="nexvaulttrade_profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+</nav>
+
+  <script>
+    // ---------- CURRENCY MASTER DATA (exactly matches images + includes ETH for deposit style) ----------
+    const currencies = [
+        { id: 'eth', name: 'Ethereum', symbol: 'ETH', network: 'ERC20', icon: '⟠', 
+          address: '0x6280C0c8964c6aD383F42c832EEf4284dB3064D2', 
+          minAmount: '0.001000 ETH', confirmations: '0 Confirmations', minRaw: 0.001, assetType: 'ETH' },
+        { id: 'bnb', name: 'Binance coin', symbol: 'BNB', network: 'BEP20', icon: '⬛',
+          address: '0x6280C0c8964c6aD383F42c832EEf4284dB3064D2',
+          minAmount: '0.010000 BNB', confirmations: '10 Confirmations', minRaw: 0.01, assetType: 'BNB' },
+        { id: 'btc', name: 'Bitcoin', symbol: 'BTC', network: 'BTC', icon: '₿',
+          address: 'bc1qvsgf8m84up6mlg9gxx853ez35064d5tl6xpszs',
+          minAmount: '0.000500 BTC', confirmations: '2 Confirmations', minRaw: 0.0005, assetType: 'BTC' },
+        { id: 'sol', name: 'SOL', symbol: 'SOL', network: 'Solana', icon: '◎',
+          address: '2vT5nH6LdPqnfZHyVhzvvr3GjeSF6ukBm1E7XEReTCF6',
+          minAmount: '0.010000 SOL', confirmations: '10 Confirmations', minRaw: 0.01, assetType: 'SOL' },
+        { id: 'usdc_erc', name: 'USD Coin', symbol: 'USDC', network: 'ERC20', icon: '💵',
+          address: '0x6280C0c8964c6aD383F42c832EEf4284dB3064D2',
+          minAmount: '10.000000 USD', confirmations: '0 Confirmations', minRaw: 10, assetType: 'USDC' },
+        { id: 'usdt_erc', name: 'USD Tether', symbol: 'USDT', network: 'ERC20', icon: '₮',
+          address: '0x6280C0c8964c6aD383F42c832EEf4284dB3064D2',
+          minAmount: '10.000000 USDT', confirmations: '10 Confirmations', minRaw: 10, assetType: 'USDT_ERC' },
+        { id: 'usdt_trc', name: 'USD Tether', symbol: 'USDT', network: 'TRC20', icon: '₮',
+          address: 'TQZczxS7A7dTt8xJeihNx3WGomEb3RLyc2',
+          minAmount: '20.000000 USDT', confirmations: '10 Confirmations', minRaw: 20, assetType: 'USDT_TRC' },
+        { id: 'usdt_sol', name: 'USD Tether', symbol: 'USDT', network: 'SOL', icon: '◎₮',
+          address: '2vT5nH6LdPqnfZHyVhzvvr3GjeSF6ukBm1E7XEReTCF6',
+          minAmount: '10.000000 USDT', confirmations: '10 Confirmations', minRaw: 10, assetType: 'USDT_SOL' },
+        { id: 'usdt_bep', name: 'USD Tether', symbol: 'USDT', network: 'BEP20', icon: '⬛₮',
+          address: '0x6280C0c8964c6aD383F42c832EEf4284dB3064D2',
+          minAmount: '10.000000 USDT', confirmations: '10 Confirmations', minRaw: 10, assetType: 'USDT_BEP' }
+    ];
+
+    // STATE
+    let currentStep = 'selectWallet';  // 'selectWallet', 'currencyList', 'deposit'
+    let selectedCurrency = null;       // full currency object
+
+    const appRoot = document.getElementById('appRoot');
+
+    // Helper: generate fresh QR code inside container
+    function generateQRCode(address, elementId = 'qrcode') {
+        const qrContainer = document.getElementById(elementId);
+        if (!qrContainer) return;
+        qrContainer.innerHTML = '';
+        try {
+            new QRCode(qrContainer, {
+                text: address,
+                width: 160,
+                height: 160,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        } catch(e) {
+            qrContainer.innerHTML = `<div style="width:160px;height:160px;background:#eee;display:flex;align-items:center;justify-content:center;">⚠️ QR error</div>`;
+        }
+    }
+
+    // copy to clipboard
+    function copyToClipboard(text, triggerElement) {
+        navigator.clipboard.writeText(text).then(() => {
+            const originalHtml = triggerElement.innerHTML;
+            triggerElement.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                triggerElement.innerHTML = originalHtml;
+            }, 1200);
+        }).catch(() => {
+            alert('Could not copy address');
+        });
+    }
+
+    // share address (native share or copy fallback)
+    function shareAddress(address, coinName) {
+        if (navigator.share) {
+            navigator.share({
+                title: `Deposit ${coinName}`,
+                text: `Receive address for ${coinName}:`,
+                url: address,
+            }).catch(() => copyToClipboardManual(address));
+        } else {
+            copyToClipboardManual(address);
+        }
+        function copyToClipboardManual(addr) {
+            navigator.clipboard.writeText(addr);
+            alert(`✅ Address copied: ${addr.slice(0,8)}...${addr.slice(-6)}`);
+        }
+    }
+
+    // simulate admin deposit confirmation and redirect to dashboard
+    function handleMadePayment(currency) {
+        // Build deposit request object (mocked)
+        const depositRequest = {
+            currency: currency.name + (currency.network ? ` (${currency.network})` : ''),
+            amount: currency.minAmount,
+            address: currency.address,
+            timestamp: new Date().toISOString(),
+            status: 'pending_admin_confirmation'
+        };
+        // store in localStorage to simulate "immediate update" -> admin panel would confirm (mock)
+        let pendingDeposits = JSON.parse(localStorage.getItem('crypto_deposits_pending') || '[]');
+        pendingDeposits.push(depositRequest);
+        localStorage.setItem('crypto_deposits_pending', JSON.stringify(pendingDeposits));
+        
+        // Show user feedback
+        const btn = document.querySelector('.payment-btn');
+        if(btn) {
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Submitting...';
+            btn.disabled = true;
+        }
+        
+        setTimeout(() => {
+            // simulate redirect to dashboard after payment claim
+            // In real scenario, admin confirmation would update immediately – but we redirect to dashboard page
+            // According to requirement: redirect to dashboard and payment will be confirmed by admin.
+            alert(`✅ Deposit request sent for ${currency.name} ${currency.network ? '('+currency.network+')' : ''}.\nAdmin will confirm shortly. Redirecting to dashboard...`);
+            window.location.href = 'nexvaulttrade_dashboard.html';
+            // fallback message if redirect fails (just for demo, but it will try)
+        }, 800);
+    }
+
+    // render step 1: Select Wallet screen
+    function renderSelectWallet() {
+        return `
+            <div class="screen">
+                <div class="screen-header">
+                    <div style="width:38px"></div>
+                    <div class="screen-title">Select Wallet</div>
+                </div>
+                <div style="display: flex; justify-content: center; margin: 40px 0 20px;">
+                    <div style="background:#121C26; border-radius: 70px; padding: 20px; width: 100%; text-align: center;">
+                        <i class="fas fa-wallet" style="font-size: 48px; color: #3B82F6; opacity: 0.9;"></i>
+                        <p style="color:#9BB1CA; margin-top: 12px;">Your crypto vault</p>
+                    </div>
+                </div>
+                <button class="add-crypto-btn" id="addCryptoBtn">
+                    <i class="fas fa-plus-circle"></i> Add crypto asset
+                </button>
+                <p style="text-align:center; font-size:0.7rem; color:#4F6F8F; margin-top: 32px;">Choose asset to deposit</p>
+            </div>
+        `;
+    }
+
+    // step 2: Currency list (Select Currency to Add) - exactly like second screenshot with all currencies + ETH
+    function renderCurrencyList() {
+        const currencyItems = currencies.map(coin => `
+            <div class="currency-item" data-id="${coin.id}">
+                <div class="currency-icon">${coin.icon}</div>
+                <div class="currency-info">
+                    <h4>${coin.name} ${coin.network ? `(${coin.network})` : ''}</h4>
+                    <p>${coin.symbol}</p>
+                </div>
+            </div>
+        `).join('');
+        return `
+            <div class="screen">
+                <div class="screen-header">
+                    <button class="back-btn" id="backToWalletBtn"><i class="fas fa-arrow-left"></i></button>
+                    <div class="screen-title">Select Currency to Add</div>
+                </div>
+                <div class="currency-grid" id="currencyGrid">
+                    ${currencyItems}
+                </div>
+                <p style="font-size:0.7rem; text-align:center; color:#54738F; margin-top: 18px;">Tap any asset to continue</p>
+            </div>
+        `;
+    }
+
+    // step 3: Deposit details screen (exactly like images: QR, address, minimum, confirmations, share address, payment button)
+    function renderDepositScreen(coin) {
+        const displayTitle = coin.name === 'USD Coin' ? 'USDC' : (coin.name === 'USD Tether' ? 'USDT' : coin.name);
+        const networkSuffix = coin.network ? ` (${coin.network})` : '';
+        const depositHeader = `Deposit ${displayTitle}${networkSuffix}`;
+        // format address for display (break)
+        const addr = coin.address;
+        const displayAddr = addr.length > 30 ? `${addr.slice(0, 18)}...${addr.slice(-12)}` : addr;
+        // define min deposit display (already string)
+        const minDeposit = coin.minAmount;
+        const confirmText = coin.confirmations;
+        return `
+            <div class="screen">
+                <div class="screen-header">
+                    <button class="back-btn" id="backToCurrencyBtn"><i class="fas fa-arrow-left"></i></button>
+                    <div class="screen-title">${depositHeader}</div>
+                </div>
+                <div class="deposit-card">
+                    <div style="text-align: center; font-size: 0.9rem; color:#B9D2F0;">Scan the QR code to get Receive address</div>
+                    <div class="qr-wrapper">
+                        <div id="qrcode"></div>
+                    </div>
+                    <div class="or-divider">or</div>
+                    <div class="address-box">
+                        <span class="address-text" id="fullAddressForCopy">${addr}</span>
+                        <i class="fas fa-copy copy-icon" id="copyAddressIcon" style="font-size: 1.2rem;"></i>
+                    </div>
+                    <div class="min-details">
+                        <span class="min-label">Minimum Deposit</span>
+                        <span class="min-value">${minDeposit}</span>
+                    </div>
+                    <div class="min-details" style="margin-top: -8px;">
+                        <span class="min-label">Deposit Arrival</span>
+                        <span class="min-value">${confirmText}</span>
+                    </div>
+                    <button class="share-btn" id="shareAddressBtn"><i class="fas fa-share-alt"></i> Share Address</button>
+                    <button class="payment-btn" id="paymentMadeBtn"><i class="fas fa-check-circle"></i> I have made payment</button>
+                    <div class="note-arrival">* Admin will confirm deposit after required confirmations</div>
+                </div>
+            </div>
+        `;
+    }
+
+    // attach listeners after rendering dynamic steps
+    function attachEventListeners() {
+        // Step 1: Add crypto asset
+        const addBtn = document.getElementById('addCryptoBtn');
+        if (addBtn) {
+            addBtn.addEventListener('click', () => {
+                currentStep = 'currencyList';
+                renderCurrentScreen();
+            });
+        }
+
+        // Step 2: Back to wallet screen
+        const backWalletBtn = document.getElementById('backToWalletBtn');
+        if (backWalletBtn) {
+            backWalletBtn.addEventListener('click', () => {
+                currentStep = 'selectWallet';
+                renderCurrentScreen();
+            });
+        }
+
+        // Step 2: currency items click
+        const currencyItems = document.querySelectorAll('.currency-item');
+        if (currencyItems.length) {
+            currencyItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const id = item.getAttribute('data-id');
+                    const found = currencies.find(c => c.id === id);
+                    if (found) {
+                        selectedCurrency = found;
+                        currentStep = 'deposit';
+                        renderCurrentScreen();
+                    }
+                });
+            });
+        }
+
+        // Step 3: back to currency list
+        const backCurrencyBtn = document.getElementById('backToCurrencyBtn');
+        if (backCurrencyBtn) {
+            backCurrencyBtn.addEventListener('click', () => {
+                currentStep = 'currencyList';
+                selectedCurrency = null;
+                renderCurrentScreen();
+            });
+        }
+
+        // Step 3: copy address
+        const copyIcon = document.getElementById('copyAddressIcon');
+        if (copyIcon && selectedCurrency) {
+            const addressFull = selectedCurrency.address;
+            copyIcon.addEventListener('click', (e) => {
+                copyToClipboard(addressFull, copyIcon);
+            });
+        }
+
+        // share address
+        const shareBtn = document.getElementById('shareAddressBtn');
+        if (shareBtn && selectedCurrency) {
+            shareBtn.addEventListener('click', () => {
+                shareAddress(selectedCurrency.address, `${selectedCurrency.name} ${selectedCurrency.network || ''}`);
+            });
+        }
+
+        // I have made payment -> redirect & admin mock
+        const paymentBtn = document.getElementById('paymentMadeBtn');
+        if (paymentBtn && selectedCurrency) {
+            paymentBtn.addEventListener('click', () => {
+                handleMadePayment(selectedCurrency);
+            });
+        }
+
+        // Re-generate QR if we are on deposit screen and qrcode container exists
+        if (currentStep === 'deposit' && selectedCurrency) {
+            const qrContainer = document.getElementById('qrcode');
+            if (qrContainer) {
+                // small delay to ensure DOM is ready
+                setTimeout(() => {
+                    generateQRCode(selectedCurrency.address, 'qrcode');
+                }, 30);
+            }
+            // also ensure full address text for copy can be displayed completely
+            const addrSpan = document.getElementById('fullAddressForCopy');
+            if (addrSpan) {
+                addrSpan.innerText = selectedCurrency.address;
+            }
+        }
+    }
+
+    // main render
+    function renderCurrentScreen() {
+        if (!appRoot) return;
+        let html = '';
+        if (currentStep === 'selectWallet') {
+            html = renderSelectWallet();
+        } else if (currentStep === 'currencyList') {
+            html = renderCurrencyList();
+        } else if (currentStep === 'deposit' && selectedCurrency) {
+            html = renderDepositScreen(selectedCurrency);
+        } else {
+            // fallback
+            html = renderSelectWallet();
+            currentStep = 'selectWallet';
+        }
+        appRoot.innerHTML = html;
+        attachEventListeners();
+    }
+
+    // Initial render
+    renderCurrentScreen();
+</script>
+</body>
+</html>
