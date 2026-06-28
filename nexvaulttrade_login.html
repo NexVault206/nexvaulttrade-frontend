@@ -34,65 +34,72 @@
   <div class="error-msg" id="errorMsg"></div>
   <button id="loginBtn" onclick="handleLogin()">Login</button>
   <div class="links">
-    <a href="nexvaulttrade_createaccount.html">Create Account</a> | <a href="#">Forgot Password?</a>
+    <a href="nexvaulttrade_createaccount.html">Create Account</a> | <a href="#" onclick="handleForgotPassword();return false;">Forgot Password?</a>
   </div>
   <div class="back-home"><a href="nexvaulttrade_index.html" style="color:#f5a623;">← Back to Home</a></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ── CONFIG — replace with your Render backend URL after deploying ──
-  const API_BASE = 'https://nexvaulttrade-backend.onrender.com/api';
+  const SUPABASE_URL = 'https://vysinfcvhbluqaozerhu.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5c2luZmN2aGJsdXFhb3plcmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzY0MjcsImV4cCI6MjA5NzkxMjQyN30.Q-jWKEBT_sizilXUn9vF7G7qsGWFlSbIAR40HpwaiX8';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // If already logged in, go straight to dashboard
-  if (localStorage.getItem('nvt_token')) {
-    window.location.href = 'nexvaulttrade_dashboard.html';
-  }
+  (async () => {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) window.location.href = 'nexvaulttrade_dashboard.html';
+  })();
 
   async function handleLogin() {
     const email    = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     const btn      = document.getElementById('loginBtn');
-    const errEl    = document.getElementById('errorMsg');
 
-    errEl.style.display = 'none';
+    document.getElementById('errorMsg').style.display = 'none';
     if (!email || !password) return showError('Please fill in all fields.');
 
-    btn.disabled    = true;
+    btn.disabled = true;
     btn.textContent = 'Logging in...';
 
     try {
-      const res  = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-
-      if (!res.ok) return showError(data.msg || 'Login failed.');
-
-      // Save token and user data
-      localStorage.setItem('nvt_token', data.token);
-      localStorage.setItem('nvt_user',  JSON.stringify(data.user));
-
-      // Redirect to dashboard
-      setTimeout(() => { window.location.href = 'nexvaulttrade_dashboard.html'; }, 300);
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) return showError(error.message);
+      window.location.href = 'nexvaulttrade_dashboard.html';
     } catch (err) {
-      showError('Cannot connect to server. Please try again.');
+      showError('Unexpected error. Please try again.');
     } finally {
-      btn.disabled    = false;
+      btn.disabled = false;
       btn.textContent = 'Login';
     }
   }
 
+  async function handleForgotPassword() {
+    const email = document.getElementById('loginEmail').value.trim();
+    if (!email) return showError('Please enter your email address first.');
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/nexvaulttrade_login.html'
+    });
+    if (error) return showError(error.message);
+    showSuccess('Password reset email sent! Check your inbox.');
+  }
+
   function showError(msg) {
     const el = document.getElementById('errorMsg');
-    el.textContent    = msg;
-    el.style.display  = 'block';
-    document.getElementById('loginBtn').disabled    = false;
+    el.textContent = msg;
+    el.style.color = '#ef4444';
+    el.style.display = 'block';
+    document.getElementById('loginBtn').disabled = false;
     document.getElementById('loginBtn').textContent = 'Login';
   }
 
-  // Allow Enter key to submit
+  function showSuccess(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.style.color = '#22c55e';
+    el.style.display = 'block';
+  }
+
   document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
 </script>
 </body>

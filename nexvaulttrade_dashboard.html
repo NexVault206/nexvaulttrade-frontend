@@ -772,7 +772,7 @@
         <!-- Welcome -->
         <div class="welcome-card">
             <div>
-                <h2>Welcome back, <span id="userName">TOWOBOLA OYELADE</span>!</h2>
+                <h2>Welcome back, <span id="userName">...</span>!</h2>
                 <p id="currentDate">Wednesday, June 17, 2026</p>
             </div>
             <button id="quickDepositBtn" class="quick-deposit-btn"><i class="fas fa-bolt"></i> + Quick Deposit</button>
@@ -875,7 +875,7 @@
                 <h4>Refer & Earn</h4>
                 <p>Earn commission when someone signs up using your link</p>
                 <div class="link-box">
-                    <span id="refLink">https://NexvaultTrade.com/TOWOBOLA_OYELADE</span>
+                    <span id="refLink">https://NexvaultTrade.com/user</span>
                     <button class="copy-btn" id="copyRefBtn">Copy</button>
                 </div>
                 <div class="refer-stats">
@@ -904,7 +904,7 @@
             </div>
             <div class="transaction-placeholder">No transactions found</div>
             <div class="member-info">
-                <span><i class="far fa-user-circle"></i> TOWOBOLA OYELADE</span>
+                <span><i class="far fa-user-circle"></i> <span id="userNameAlt">...</span></span>
                 <span>Member since May 2026</span>
             </div>
             <div class="quick-actions">
@@ -1169,8 +1169,13 @@
         const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
         if (profile) {
             // Update name
+            const displayName = (profile.full_name || session.user.email.split('@')[0]).toUpperCase();
             const nameEl = document.getElementById('userName');
-            if (nameEl) nameEl.textContent = (profile.full_name || session.user.email.split('@')[0]).toUpperCase();
+            if (nameEl) nameEl.textContent = displayName;
+            const nameAlt = document.getElementById('userNameAlt');
+            if (nameAlt) nameAlt.textContent = displayName;
+            const refLink = document.getElementById('refLink');
+            if (refLink) refLink.textContent = 'https://NexvaultTrade.com/' + displayName.replace(/\s+/g,'_');
             // Update balance
             const balEl = document.getElementById('userBalance');
             if (balEl) balEl.textContent = '$' + (profile.balance || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
