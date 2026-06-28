@@ -1,104 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Account — NexVaultTrade</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: linear-gradient(145deg, #07090f, #0a0c12); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .signup-card { background: #0f121b; padding: 48px; border-radius: 48px; width: 480px; max-width: 90%; border: 1px solid #2a3145; box-shadow: 0 25px 45px rgba(0,0,0,0.5); }
-    .signup-card h1 { color: #f5a623; margin-bottom: 4px; }
-    .signup-card p { color: #9ca3af; margin-bottom: 16px; }
-    .signup-card input { width: 100%; padding: 14px 18px; margin: 8px 0; background: #1a1f2c; border: 1px solid #2d354c; border-radius: 30px; color: white; font-size: 1rem; outline: none; transition: border 0.2s; }
-    .signup-card input:focus { border-color: #f5a623; }
-    .signup-card button { width: 100%; background: #f5a623; padding: 14px; border-radius: 40px; font-weight: 700; font-size: 1rem; margin-top: 16px; cursor: pointer; border: none; transition: opacity 0.2s; }
-    .signup-card button:hover { opacity: 0.9; }
-    .signup-card button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .bonus-note { background: #1e2a3a; padding: 12px; border-radius: 30px; text-align: center; margin: 16px 0; color: #f5a623; font-weight: 600; }
-    .back-link { text-align: center; margin-top: 20px; color: #9ca3af; }
-    .error-msg { background: #2a1515; color: #f87171; padding: 12px 16px; border-radius: 12px; margin-top: 12px; font-size: 0.9rem; display: none; }
-    .logo { text-align: center; margin-bottom: 24px; }
-    .logo span { color: #f5a623; font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account — NexVaultTrade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(145deg, #07090f, #0a0c12); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .signup-card { background: #0f121b; padding: 40px 42px; border-radius: 48px; width: 480px; max-width: 100%; border: 1px solid #2a3145; box-shadow: 0 25px 45px rgba(0,0,0,0.6); }
+        .logo { text-align: center; margin-bottom: 28px; }
+        .logo span { color: #f5a623; font-size: 1.6rem; font-weight: 800; letter-spacing: 1px; }
+        .signup-card h1 { color: #f5a623; font-weight: 700; font-size: 1.8rem; margin-bottom: 6px; }
+        .sub { color: #9ca3af; margin-bottom: 20px; font-size: 0.95rem; }
+        .bonus-note { background: #1e2a3a; padding: 12px 16px; border-radius: 30px; text-align: center; margin: 0 0 18px 0; color: #f5a623; font-weight: 600; font-size: 0.95rem; }
+        input { width: 100%; padding: 14px 18px; margin: 6px 0; background: #1a1f2c; border: 1px solid #2d354c; border-radius: 30px; color: #fff; font-size: 1rem; outline: none; transition: border 0.2s; }
+        input:focus { border-color: #f5a623; box-shadow: 0 0 0 3px rgba(245,166,35,0.15); }
+        button { width: 100%; background: #f5a623; padding: 15px; border: none; border-radius: 40px; font-weight: 700; font-size: 1rem; margin-top: 16px; cursor: pointer; transition: opacity 0.2s; color: #0f121b; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .msg-box { padding: 12px 16px; border-radius: 12px; margin-top: 14px; font-size: 0.9rem; display: none; line-height: 1.4; }
+        .msg-box.error { background: #2a1515; color: #f87171; display: block; }
+        .msg-box.success { background: #152a1a; color: #4ade80; display: block; }
+        .msg-box.info { background: #1a263a; color: #93c5fd; display: block; }
+        .back-link { text-align: center; margin-top: 22px; color: #9ca3af; font-size: 0.95rem; }
+        .back-link a { color: #f5a623; text-decoration: none; font-weight: 500; }
+        .back-link a:hover { text-decoration: underline; }
+        @media (max-width: 520px) { .signup-card { padding: 28px 20px; } }
+    </style>
 </head>
 <body>
 <div class="signup-card">
-  <div class="logo"><span>⬡ NexVaultTrade</span></div>
-  <h1>Create Account</h1>
-  <p>Join now and get 10% bonus on first deposit*</p>
-  <div class="bonus-note">🎁 Limited time offer: 10% extra bonus</div>
-  <input type="text"     id="signupName"      placeholder="Full Name">
-  <input type="email"    id="signupEmail"     placeholder="Email Address" autocomplete="email">
-  <input type="password" id="signupPassword"  placeholder="Create Password (min 6 chars)">
-  <input type="password" id="signupConfirm"   placeholder="Confirm Password">
-  <div class="error-msg" id="errorMsg"></div>
-  <button id="signupBtn" onclick="handleSignup()">Sign Up & Claim Bonus</button>
-  <div class="back-link">
-    Already have an account? <a href="nexvaulttrade_login.html" style="color:#f5a623;">Login</a> |
-    <a href="nexvaulttrade_index.html" style="color:#f5a623;">Home</a>
-  </div>
+    <div class="logo"><span>⬡ NexVaultTrade</span></div>
+    <h1>Create Account</h1>
+    <p class="sub">Join now and get 10% bonus on first deposit*</p>
+    <div class="bonus-note">🎁 Limited time offer: 10% extra bonus</div>
+
+    <input type="text" id="signupName" placeholder="Full Name" autocomplete="name">
+    <input type="email" id="signupEmail" placeholder="Email Address" autocomplete="email">
+    <input type="password" id="signupPassword" placeholder="Create Password (min 6 chars)" autocomplete="new-password">
+    <input type="password" id="signupConfirm" placeholder="Confirm Password" autocomplete="new-password">
+
+    <div class="msg-box" id="msgBox"></div>
+    <button id="signupBtn">Sign Up &amp; Claim Bonus</button>
+
+    <div class="back-link">
+        Already have an account? <a href="nexvaulttrade_login.html">Login</a> &nbsp;|&nbsp;
+        <a href="nexvaulttrade_index.html">Home</a>
+    </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ── CONFIG — replace with your Render backend URL after deploying ──
-  const API_BASE = 'https://nexvaulttrade-backend.onrender.com/api';
+    const SUPABASE_URL = 'https://vysinfcvhbluqaozerhu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5c2luZmN2aGJsdXFhb3plcmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzY0MjcsImV4cCI6MjA5NzkxMjQyN30.Q-jWKEBT_sizilXUn9vF7G7qsGWFlSbIAR40HpwaiX8';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // If already logged in, go straight to dashboard
-  if (localStorage.getItem('nvt_token')) {
-    window.location.href = 'nexvaulttrade_dashboard.html';
-  }
+    const nameInput = document.getElementById('signupName');
+    const emailInput = document.getElementById('signupEmail');
+    const passInput = document.getElementById('signupPassword');
+    const confirmInput = document.getElementById('signupConfirm');
+    const btn = document.getElementById('signupBtn');
+    const msgBox = document.getElementById('msgBox');
 
-  async function handleSignup() {
-    const name     = document.getElementById('signupName').value.trim();
-    const email    = document.getElementById('signupEmail').value.trim();
-    const password = document.getElementById('signupPassword').value;
-    const confirm  = document.getElementById('signupConfirm').value;
-    const btn      = document.getElementById('signupBtn');
+    // redirect if already logged in
+    (async function checkSession() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) window.location.href = 'nexvaulttrade_dashboard.html';
+    })();
 
-    document.getElementById('errorMsg').style.display = 'none';
-
-    if (!name || !email || !password || !confirm) return showError('Please fill in all fields.');
-    if (password !== confirm) return showError('Passwords do not match.');
-    if (password.length < 6) return showError('Password must be at least 6 characters.');
-
-    btn.disabled    = true;
-    btn.textContent = 'Creating account...';
-
-    try {
-      const res  = await fetch(`${API_BASE}/auth/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
-      });
-      const data = await res.json();
-
-      if (!res.ok) return showError(data.msg || 'Signup failed.');
-
-      // Save token and user data
-      localStorage.setItem('nvt_token', data.token);
-      localStorage.setItem('nvt_user',  JSON.stringify(data.user));
-
-      // Redirect to login page
-      setTimeout(() => { window.location.href = 'nexvaulttrade_login.html'; }, 300);
-    } catch (err) {
-      showError('Cannot connect to server. Please try again.');
-    } finally {
-      btn.disabled    = false;
-      btn.textContent = 'Sign Up & Claim Bonus';
+    function showMessage(text, type = 'error') {
+        msgBox.className = 'msg-box ' + type;
+        msgBox.textContent = text;
+        msgBox.style.display = 'block';
     }
-  }
+    function hideMessage() {
+        msgBox.style.display = 'none';
+        msgBox.className = 'msg-box';
+    }
 
-  function showError(msg) {
-    const el = document.getElementById('errorMsg');
-    el.textContent   = msg;
-    el.style.display = 'block';
-    document.getElementById('signupBtn').disabled    = false;
-    document.getElementById('signupBtn').textContent = 'Sign Up & Claim Bonus';
-  }
+    async function handleSignup() {
+        hideMessage();
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        const password = passInput.value;
+        const confirm = confirmInput.value;
 
-  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleSignup(); });
+        if (!name || !email || !password || !confirm) return showMessage('Please fill in all fields.', 'error');
+        if (password !== confirm) return showMessage('Passwords do not match.', 'error');
+        if (password.length < 6) return showMessage('Password must be at least 6 characters.', 'error');
+
+        btn.disabled = true;
+        btn.textContent = 'Creating account…';
+
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: { full_name: name },
+                    emailRedirectTo: 'https://nexvaulttrade.site/login'  // redirect after verification
+                }
+            });
+
+            if (error) {
+                if (error.message.includes('already registered')) {
+                    return showMessage('This email is already registered. Please login instead.', 'error');
+                }
+                return showMessage(error.message, 'error');
+            }
+
+            // Success
+            showMessage(
+                '✅ Account created! Please check your email inbox and click the verification link to activate your account. Then log in.',
+                'success'
+            );
+            btn.disabled = true;
+            btn.textContent = 'Check your email 📧';
+            nameInput.value = emailInput.value = passInput.value = confirmInput.value = '';
+
+            setTimeout(() => {
+                window.location.href = 'nexvaulttrade_login.html?verified=pending';
+            }, 4000);
+
+        } catch (err) {
+            console.error(err);
+            showMessage('Unexpected error. Please try again.', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Sign Up & Claim Bonus';
+        }
+    }
+
+    document.getElementById('signupBtn').addEventListener('click', handleSignup);
+    document.addEventListener('keydown', e => { if (e.key === 'Enter') handleSignup(); });
+
+    // check URL param for pending verification reminder
+    (function checkUrlParam() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('verified') === 'pending') {
+            showMessage('📩 We sent a verification email. Please click the link in that email to activate your account, then log in.', 'info');
+        }
+    })();
 </script>
 </body>
 </html>
+  

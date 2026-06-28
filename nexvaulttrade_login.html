@@ -1,106 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — NexVaultTrade</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: linear-gradient(145deg, #07090f 0%, #0a0c12 100%); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .login-card { background: #0f121b; padding: 48px; border-radius: 48px; width: 420px; max-width: 90%; border: 1px solid #2a3145; box-shadow: 0 25px 45px rgba(0,0,0,0.5); }
-    .login-card h1 { color: #f5a623; margin-bottom: 8px; }
-    .login-card p { color: #9ca3af; margin-bottom: 24px; }
-    .login-card input { width: 100%; padding: 14px 18px; margin: 8px 0; background: #1a1f2c; border: 1px solid #2d354c; border-radius: 30px; color: white; font-size: 1rem; outline: none; transition: border 0.2s; }
-    .login-card input:focus { border-color: #f5a623; }
-    .login-card button { width: 100%; background: #f5a623; padding: 14px; border: none; border-radius: 40px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 16px; transition: opacity 0.2s; }
-    .login-card button:hover { opacity: 0.9; }
-    .login-card button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .links { text-align: center; margin-top: 24px; }
-    .links a { color: #f5a623; text-decoration: none; margin: 0 8px; }
-    .back-home { display: block; text-align: center; margin-top: 20px; }
-    .error-msg { background: #2a1515; color: #f87171; padding: 12px 16px; border-radius: 12px; margin-top: 12px; font-size: 0.9rem; display: none; }
-    .logo { text-align: center; margin-bottom: 24px; }
-    .logo span { color: #f5a623; font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — NexVaultTrade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(145deg, #07090f, #0a0c12); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .login-card { background: #0f121b; padding: 40px 42px; border-radius: 48px; width: 420px; max-width: 100%; border: 1px solid #2a3145; box-shadow: 0 25px 45px rgba(0,0,0,0.6); }
+        .logo { text-align: center; margin-bottom: 28px; }
+        .logo span { color: #f5a623; font-size: 1.6rem; font-weight: 800; letter-spacing: 1px; }
+        .login-card h1 { color: #f5a623; font-weight: 700; font-size: 1.8rem; margin-bottom: 6px; }
+        .sub { color: #9ca3af; margin-bottom: 24px; font-size: 0.95rem; }
+        input { width: 100%; padding: 14px 18px; margin: 6px 0; background: #1a1f2c; border: 1px solid #2d354c; border-radius: 30px; color: #fff; font-size: 1rem; outline: none; transition: border 0.2s; }
+        input:focus { border-color: #f5a623; box-shadow: 0 0 0 3px rgba(245,166,35,0.15); }
+        button { width: 100%; background: #f5a623; padding: 15px; border: none; border-radius: 40px; font-weight: 700; font-size: 1rem; margin-top: 16px; cursor: pointer; transition: opacity 0.2s; color: #0f121b; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .msg-box { padding: 12px 16px; border-radius: 12px; margin-top: 14px; font-size: 0.9rem; display: none; line-height: 1.4; }
+        .msg-box.error { background: #2a1515; color: #f87171; display: block; }
+        .msg-box.success { background: #152a1a; color: #4ade80; display: block; }
+        .msg-box.info { background: #1a263a; color: #93c5fd; display: block; }
+        .links { text-align: center; margin-top: 24px; }
+        .links a { color: #f5a623; text-decoration: none; margin: 0 8px; font-weight: 500; }
+        .links a:hover { text-decoration: underline; }
+        .back-home { text-align: center; margin-top: 20px; }
+        .back-home a { color: #f5a623; text-decoration: none; font-weight: 500; }
+        .back-home a:hover { text-decoration: underline; }
+        @media (max-width: 520px) { .login-card { padding: 28px 20px; } }
+    </style>
 </head>
 <body>
 <div class="login-card">
-  <div class="logo"><span>⬡ NexVaultTrade</span></div>
-  <h1>Welcome Back</h1>
-  <p>Login to your NexVaultTrade account</p>
-  <input type="email" id="loginEmail" placeholder="Email Address" autocomplete="email">
-  <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
-  <div class="error-msg" id="errorMsg"></div>
-  <button id="loginBtn" onclick="handleLogin()">Login</button>
-  <div class="links">
-    <a href="nexvaulttrade_createaccount.html">Create Account</a> | <a href="#" onclick="handleForgotPassword();return false;">Forgot Password?</a>
-  </div>
-  <div class="back-home"><a href="nexvaulttrade_index.html" style="color:#f5a623;">← Back to Home</a></div>
+    <div class="logo"><span>⬡ NexVaultTrade</span></div>
+    <h1>Welcome Back</h1>
+    <p class="sub">Login to your NexVaultTrade account</p>
+
+    <input type="email" id="loginEmail" placeholder="Email Address" autocomplete="email">
+    <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+
+    <div class="msg-box" id="msgBox"></div>
+    <button id="loginBtn">Login</button>
+
+    <div class="links">
+        <a href="nexvaulttrade_createaccount.html">Create Account</a> |
+        <a href="#" id="forgotLink">Forgot Password?</a>
+    </div>
+    <div class="back-home"><a href="nexvaulttrade_index.html">← Back to Home</a></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL = 'https://vysinfcvhbluqaozerhu.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5c2luZmN2aGJsdXFhb3plcmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzY0MjcsImV4cCI6MjA5NzkxMjQyN30.Q-jWKEBT_sizilXUn9vF7G7qsGWFlSbIAR40HpwaiX8';
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const SUPABASE_URL = 'https://vysinfcvhbluqaozerhu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5c2luZmN2aGJsdXFhb3plcmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzY0MjcsImV4cCI6MjA5NzkxMjQyN30.Q-jWKEBT_sizilXUn9vF7G7qsGWFlSbIAR40HpwaiX8';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // If already logged in, go straight to dashboard
-  (async () => {
-    const { data: { session } } = await sb.auth.getSession();
-    if (session) window.location.href = 'nexvaulttrade_dashboard.html';
-  })();
+    const emailInput = document.getElementById('loginEmail');
+    const passInput = document.getElementById('loginPassword');
+    const btn = document.getElementById('loginBtn');
+    const msgBox = document.getElementById('msgBox');
 
-  async function handleLogin() {
-    const email    = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
-    const btn      = document.getElementById('loginBtn');
+    // redirect if already logged in
+    (async function checkSession() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) window.location.href = 'nexvaulttrade_dashboard.html';
+    })();
 
-    document.getElementById('errorMsg').style.display = 'none';
-    if (!email || !password) return showError('Please fill in all fields.');
-
-    btn.disabled = true;
-    btn.textContent = 'Logging in...';
-
-    try {
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) return showError(error.message);
-      window.location.href = 'nexvaulttrade_dashboard.html';
-    } catch (err) {
-      showError('Unexpected error. Please try again.');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Login';
+    function showMessage(text, type = 'error') {
+        msgBox.className = 'msg-box ' + type;
+        msgBox.textContent = text;
+        msgBox.style.display = 'block';
     }
-  }
+    function hideMessage() {
+        msgBox.style.display = 'none';
+        msgBox.className = 'msg-box';
+    }
 
-  async function handleForgotPassword() {
-    const email = document.getElementById('loginEmail').value.trim();
-    if (!email) return showError('Please enter your email address first.');
-    const { error } = await sb.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/nexvaulttrade_login.html'
+    async function handleLogin() {
+        hideMessage();
+        const email = emailInput.value.trim();
+        const password = passInput.value;
+
+        if (!email || !password) return showMessage('Please fill in all fields.', 'error');
+
+        btn.disabled = true;
+        btn.textContent = 'Logging in…';
+
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                // Supabase throws specific error for unconfirmed email
+                if (error.message && error.message.toLowerCase().includes('email not confirmed')) {
+                    return showMessage(
+                        '⚠️ Please verify your email before logging in. Check your inbox and click the confirmation link.',
+                        'error'
+                    );
+                }
+                return showMessage(error.message, 'error');
+            }
+
+            // Success – user is logged in and email is confirmed (because Supabase wouldn't allow otherwise)
+            window.location.href = 'nexvaulttrade_dashboard.html';
+
+        } catch (err) {
+            console.error(err);
+            showMessage('Unexpected error. Please try again.', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Login';
+        }
+    }
+
+    // Forgot password
+    async function handleForgotPassword() {
+        const email = emailInput.value.trim();
+        if (!email) return showMessage('Please enter your email address first.', 'error');
+
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: 'https://nexvaulttrade.site/reset-password'
+        });
+
+        if (error) return showMessage(error.message, 'error');
+        showMessage('📧 Password reset email sent! Check your inbox.', 'success');
+    }
+
+    // Wire events
+    document.getElementById('loginBtn').addEventListener('click', handleLogin);
+    document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+    document.getElementById('forgotLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleForgotPassword();
     });
-    if (error) return showError(error.message);
-    showSuccess('Password reset email sent! Check your inbox.');
-  }
 
-  function showError(msg) {
-    const el = document.getElementById('errorMsg');
-    el.textContent = msg;
-    el.style.color = '#ef4444';
-    el.style.display = 'block';
-    document.getElementById('loginBtn').disabled = false;
-    document.getElementById('loginBtn').textContent = 'Login';
-  }
-
-  function showSuccess(msg) {
-    const el = document.getElementById('errorMsg');
-    el.textContent = msg;
-    el.style.color = '#22c55e';
-    el.style.display = 'block';
-  }
-
-  document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+    // Check for pending verification message (from signup redirect)
+    (function checkUrlParam() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('verified') === 'pending') {
+            showMessage('📩 Your account is created. Please verify your email before logging in.', 'info');
+        }
+    })();
 </script>
 </body>
 </html>
