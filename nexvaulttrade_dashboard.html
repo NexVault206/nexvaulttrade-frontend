@@ -442,6 +442,62 @@
         body.light .message-float i { color: #1A1D2E; }
         .message-float:hover { transform: scale(1.05); }
 
+        /* ---------- MESSAGE MODAL ---------- */
+        .msg-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 300;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .msg-modal-overlay.open { display: flex; }
+        .msg-modal {
+            background: var(--bg-card);
+            border-radius: 32px 32px 0 0;
+            padding: 28px 20px 40px;
+            width: 100%;
+            max-width: 520px;
+            border-top: 1px solid var(--border);
+        }
+        .msg-modal h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .msg-modal h3 i { color: var(--accent); }
+        .msg-input {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            margin-bottom: 12px;
+            resize: none;
+        }
+        .msg-input:focus { border-color: var(--accent); }
+        .msg-send-btn {
+            width: 100%;
+            background: var(--accent);
+            color: #0A0E17;
+            border: none;
+            border-radius: 30px;
+            padding: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+        .msg-send-btn:disabled { opacity: 0.5; }
+        .msg-close { float: right; background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer; }
+
         /* ---------- TOAST ---------- */
         .toast-msg {
             position: fixed;
@@ -776,6 +832,20 @@
 
 <!-- ===== FLOATING MESSAGE BUTTON ===== -->
 <div class="message-float" id="messageFloatBtn"><i class="fas fa-comment-dots"></i></div>
+
+<!-- ===== MESSAGE MODAL ===== -->
+<div class="msg-modal-overlay" id="msgOverlay">
+  <div class="msg-modal">
+    <button class="msg-close" onclick="closeMsgModal()"><i class="fas fa-times"></i></button>
+    <h3><i class="fas fa-comment-dots"></i> Message Admin</h3>
+    <input class="msg-input" type="text" id="msgSubject" placeholder="Subject (e.g. Withdrawal issue)">
+    <textarea class="msg-input" id="msgBody" rows="4" placeholder="Type your message here..."></textarea>
+    <div id="msgStatus" style="font-size:13px;color:var(--success);margin-bottom:8px;display:none;"></div>
+    <button class="msg-send-btn" id="msgSendBtn" onclick="sendMessage()">
+      <i class="fas fa-paper-plane"></i> Send Message
+    </button>
+  </div>
+</div>
 
 <!-- ===== BOTTOM NAVIGATION ===== -->
 <div class="bottom-nav">

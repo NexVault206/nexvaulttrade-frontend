@@ -331,6 +331,7 @@
         .nav-item i { font-size: 20px; }
         .nav-item.active, .nav-item:hover { color: #D4AF37; }
     </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="withdrawal-container" id="withdrawApp"></div>
@@ -346,11 +347,32 @@
 </nav>
 
 <script>
+    // ---------- SUPABASE ----------
+    const SUPABASE_URL = 'https://vysinfcvhbluqaozerhu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5c2luZmN2aGJsdXFhb3plcmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzY0MjcsImV4cCI6MjA5NzkxMjQyN30.Q-jWKEBT_sizilXUn9vF7G7qsGWFlSbIAR40HpwaiX8';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     // ---------- STATE ----------
-    let userBalance = 14023.15;      // USD / EUR style
-    let isTierUpgraded = false;      // if false → first withdrawal triggers lock & error
-    let isBalanceLocked = false;      // shows "LOCKED" red on balance, prevents new withdrawal until upgrade
-    let withdrawalInProgress = false; // true while inside flow (steps 1-4)
+    let userBalance = 0;
+    let isTierUpgraded = false;
+    let isBalanceLocked = false;
+    let withdrawalInProgress = false;
+
+    // Load real balance from Supabase
+    async function loadUserBalance() {
+        try {
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) { window.location.href = 'nexvaulttrade_login.html'; return; }
+            const { data: profile } = await sb.from('profiles').select('balance').eq('id', session.user.id).single();
+            if (profile) {
+                userBalance = profile.balance || 0;
+                // Override localStorage with real balance
+                localStorage.setItem('nexvault_balance', userBalance);
+            }
+        } catch(e) {
+            console.warn('Could not load balance from Supabase:', e);
+        }
+    }
     
     // Flow data
     let currentStep = 0;   // 0: initiation, 1: submit details, 2: verifying details, 3: processing withdrawal
