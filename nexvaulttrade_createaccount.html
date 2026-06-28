@@ -80,8 +80,8 @@
       localStorage.setItem('nvt_token', data.token);
       localStorage.setItem('nvt_user',  JSON.stringify(data.user));
 
-      // Redirect to dashboard
-      setTimeout(() => { window.location.href = 'nexvaulttrade_dashboard.html'; }, 300);
+      // Redirect to login page
+      setTimeout(() => { window.location.href = 'nexvaulttrade_login.html'; }, 300);
     } catch (err) {
       showError('Cannot connect to server. Please try again.');
     } finally {

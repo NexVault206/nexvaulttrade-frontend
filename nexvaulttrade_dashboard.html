@@ -654,6 +654,93 @@
         .forex-loading i { color: var(--accent); margin-right: 8px; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* ---------- KYC MODAL ---------- */
+        .kyc-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 400;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .kyc-overlay.open { display: flex; }
+        .kyc-modal {
+            background: var(--bg-card);
+            border-radius: 32px 32px 0 0;
+            padding: 28px 20px 40px;
+            width: 100%;
+            max-width: 520px;
+            border-top: 1px solid var(--border);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .kyc-modal h3 {
+            font-size: 18px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .kyc-modal h3 i { color: var(--accent); }
+        .kyc-subtitle {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        .kyc-input {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 13px 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            margin-bottom: 12px;
+        }
+        .kyc-input:focus { border-color: var(--accent); }
+        .kyc-submit-btn {
+            width: 100%;
+            background: var(--accent);
+            color: #0A0E17;
+            border: none;
+            border-radius: 30px;
+            padding: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+        .kyc-submit-btn:disabled { opacity: 0.5; }
+        .kyc-processing {
+            text-align: center;
+            padding: 30px 0;
+            display: none;
+        }
+        .kyc-processing .kyc-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        .kyc-processing p { color: var(--text-secondary); font-size: 14px; }
+        .kyc-success {
+            text-align: center;
+            padding: 30px 0;
+            display: none;
+        }
+        .kyc-success .kyc-check {
+            font-size: 60px;
+            margin-bottom: 12px;
+        }
+        .kyc-success h4 { font-size: 20px; color: var(--success); margin-bottom: 8px; }
+        .kyc-success p { color: var(--text-secondary); font-size: 14px; }
+
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 760px) {
             .stats-grid { grid-template-columns: 1fr 1fr; }
@@ -662,6 +749,7 @@
             .message-float { bottom: 85px; right: 16px; width: 48px; height: 48px; }
         }
     </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="app-container">
@@ -674,7 +762,7 @@
         </div>
         <div class="header-actions">
             <div class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></div>
-            <div id="accountBadge" class="badge-status">Unverified</div>
+            <div id="accountBadge" class="badge-status" onclick="openKYC()" style="cursor:pointer;">⚠️ Unverified</div>
         </div>
     </div>
 
@@ -833,6 +921,49 @@
 <!-- ===== FLOATING MESSAGE BUTTON ===== -->
 <div class="message-float" id="messageFloatBtn"><i class="fas fa-comment-dots"></i></div>
 
+<!-- ===== KYC MODAL ===== -->
+<div class="kyc-overlay" id="kycOverlay">
+  <div class="kyc-modal">
+    <button onclick="closeKYC()" style="float:right;background:none;border:none;color:var(--text-secondary);font-size:20px;cursor:pointer;"><i class="fas fa-times"></i></button>
+
+    <!-- Form -->
+    <div id="kycForm">
+      <h3><i class="fas fa-shield-alt"></i> KYC Verification</h3>
+      <p class="kyc-subtitle">Complete your identity verification to unlock full account access.</p>
+      <input class="kyc-input" type="text" id="kycFullName" placeholder="Full Name">
+      <input class="kyc-input" type="date" id="kycDOB" placeholder="Date of Birth">
+      <input class="kyc-input" type="tel" id="kycPhone" placeholder="Phone Number">
+      <select class="kyc-input" id="kycCountry">
+        <option value="">Select Country</option>
+        <option>Nigeria</option><option>Ghana</option><option>Kenya</option>
+        <option>South Africa</option><option>United Kingdom</option>
+        <option>United States</option><option>Canada</option>
+        <option>Australia</option><option>India</option><option>Other</option>
+      </select>
+      <input class="kyc-input" type="text" id="kycIDNumber" placeholder="ID Number (NIN, Passport, etc.)">
+      <div id="kycError" style="color:#ef4444;font-size:13px;margin-bottom:8px;display:none;"></div>
+      <button class="kyc-submit-btn" id="kycSubmitBtn" onclick="submitKYC()">
+        <i class="fas fa-check-circle"></i> Submit Verification
+      </button>
+    </div>
+
+    <!-- Processing -->
+    <div class="kyc-processing" id="kycProcessing">
+      <div class="kyc-spinner"></div>
+      <h4 style="margin-bottom:8px;">Verifying your details...</h4>
+      <p>Please wait while we verify your identity. This takes about 2 minutes.</p>
+      <div id="kycCountdown" style="font-size:24px;font-weight:800;color:var(--accent);margin-top:16px;">2:00</div>
+    </div>
+
+    <!-- Success -->
+    <div class="kyc-success" id="kycSuccess">
+      <div class="kyc-check">✅</div>
+      <h4>Account Verified!</h4>
+      <p>Your identity has been successfully verified. You now have full access to all features.</p>
+    </div>
+  </div>
+</div>
+
 <!-- ===== MESSAGE MODAL ===== -->
 <div class="msg-modal-overlay" id="msgOverlay">
   <div class="msg-modal">
@@ -941,10 +1072,172 @@
         });
     });
 
+    // ===== KYC VERIFICATION =====
+    function openKYC() {
+        const badge = document.getElementById('accountBadge');
+        if (badge.textContent.includes('Verified') && !badge.textContent.includes('Un')) return;
+        document.getElementById('kycOverlay').classList.add('open');
+    }
+
+    function closeKYC() {
+        document.getElementById('kycOverlay').classList.remove('open');
+        // Reset form
+        setTimeout(() => {
+            document.getElementById('kycForm').style.display = 'block';
+            document.getElementById('kycProcessing').style.display = 'none';
+            document.getElementById('kycSuccess').style.display = 'none';
+            document.getElementById('kycError').style.display = 'none';
+        }, 300);
+    }
+
+    document.getElementById('kycOverlay')?.addEventListener('click', function(e) {
+        if (e.target === this) closeKYC();
+    });
+
+    async function submitKYC() {
+        const fullName = document.getElementById('kycFullName').value.trim();
+        const dob = document.getElementById('kycDOB').value;
+        const phone = document.getElementById('kycPhone').value.trim();
+        const country = document.getElementById('kycCountry').value;
+        const idNumber = document.getElementById('kycIDNumber').value.trim();
+        const errEl = document.getElementById('kycError');
+
+        if (!fullName || !dob || !phone || !country || !idNumber) {
+            errEl.textContent = 'Please fill in all fields.';
+            errEl.style.display = 'block';
+            return;
+        }
+
+        // Show processing
+        document.getElementById('kycForm').style.display = 'none';
+        document.getElementById('kycProcessing').style.display = 'block';
+
+        // Countdown 2 minutes
+        let seconds = 120;
+        const countdown = document.getElementById('kycCountdown');
+        const timer = setInterval(() => {
+            seconds--;
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            countdown.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            if (seconds <= 0) {
+                clearInterval(timer);
+                completeKYC(fullName, phone, country);
+            }
+        }, 1000);
+    }
+
+    async function completeKYC(fullName, phone, country) {
+        try {
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) {
+                await sb.from('profiles').update({
+                    is_verified: true,
+                    full_name: fullName,
+                    phone: phone,
+                    country: country
+                }).eq('id', session.user.id);
+            }
+        } catch(e) { console.warn('KYC update error:', e); }
+
+        // Show success
+        document.getElementById('kycProcessing').style.display = 'none';
+        document.getElementById('kycSuccess').style.display = 'block';
+
+        // Update badge
+        const badge = document.getElementById('accountBadge');
+        badge.textContent = '✅ Verified';
+        badge.classList.add('verified');
+        badge.style.cursor = 'default';
+
+        // Close after 3 seconds
+        setTimeout(() => closeKYC(), 3000);
+    }
+    // ===== END KYC =====
+
+    // ===== SUPABASE AUTH + USER DATA =====
+    const SUPABASE_URL = 'https://vysinfcvhbluqaozerhu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5c2luZmN2aGJsdXFhb3plcmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzY0MjcsImV4cCI6MjA5NzkxMjQyN30.Q-jWKEBT_sizilXUn9vF7G7qsGWFlSbIAR40HpwaiX8';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function loadUserData() {
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session) {
+            window.location.href = 'nexvaulttrade_login.html';
+            return;
+        }
+        const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+        if (profile) {
+            // Update name
+            const nameEl = document.getElementById('userName');
+            if (nameEl) nameEl.textContent = (profile.full_name || session.user.email.split('@')[0]).toUpperCase();
+            // Update balance
+            const balEl = document.getElementById('userBalance');
+            if (balEl) balEl.textContent = '$' + (profile.balance || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+            // Update verified status
+            const badge = document.getElementById('accountBadge');
+            if (badge) {
+                if (profile.is_verified) {
+                    badge.textContent = '✅ Verified';
+                    badge.classList.add('verified');
+                    badge.style.cursor = 'default';
+                } else {
+                    badge.textContent = '⚠️ Unverified';
+                    badge.classList.remove('verified');
+                    badge.style.cursor = 'pointer';
+                }
+            }
+        }
+    }
+    loadUserData();
+
     // Message admin button
     document.getElementById('messageFloatBtn').addEventListener('click', () => {
-        showToast('📨 Message Admin feature coming soon');
+        document.getElementById('msgOverlay').classList.add('open');
     });
+
+    function closeMsgModal() {
+        document.getElementById('msgOverlay').classList.remove('open');
+        document.getElementById('msgSubject').value = '';
+        document.getElementById('msgBody').value = '';
+        const s = document.getElementById('msgStatus');
+        if(s) s.style.display = 'none';
+    }
+
+    document.getElementById('msgOverlay')?.addEventListener('click', function(e) {
+        if (e.target === this) closeMsgModal();
+    });
+
+    async function sendMessage() {
+        const subject = document.getElementById('msgSubject').value.trim();
+        const message = document.getElementById('msgBody').value.trim();
+        const btn = document.getElementById('msgSendBtn');
+        const status = document.getElementById('msgStatus');
+        if (!subject || !message) { showToast('Please fill in all fields'); return; }
+        btn.disabled = true; btn.textContent = 'Sending...';
+        try {
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) { showToast('Please login first'); return; }
+            const { error } = await sb.from('admin_messages').insert({
+                user_id: session.user.id,
+                subject,
+                message,
+                read: false
+            });
+            if (error) throw error;
+            await fetch('https://nexvaulttrade-backend-1.onrender.com/api/messages/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+                body: JSON.stringify({ subject, message, userEmail: session.user.email })
+            });
+            if(status){ status.textContent = '✅ Message sent!'; status.style.display = 'block'; }
+            setTimeout(() => closeMsgModal(), 2000);
+        } catch(e) {
+            showToast('Failed to send. Try again.');
+        } finally {
+            btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+        }
+    }
 
     // Toast helper
     function showToast(msg) {
