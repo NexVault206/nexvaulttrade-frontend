@@ -40,7 +40,7 @@
     <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
 
     <div class="msg-box" id="msgBox"></div>
-    <button id="loginBtn">Login</button>
+    <button type="button" id="loginBtn">Login</button>
 
     <div class="links">
         <a href="nexvaulttrade_createaccount.html">Create Account</a> |
@@ -51,95 +51,103 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    const SUPABASE_URL = 'https://vfpxnywxciwxldbhlqhp.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcHhueXd4Y2l3eGxkYmhscWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MzU5MzEsImV4cCI6MjA5ODIxMTkzMX0.mUDHLVKsCL6Jd-ZMvnYWBoyoNf3cKXpbVUuj4qHpHqg';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    document.addEventListener('DOMContentLoaded', function() {
+        const SUPABASE_URL = 'https://vfpxnywxciwxldbhlqhp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcHhueXd4Y2l3eGxkYmhscWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MzU5MzEsImV4cCI6MjA5ODIxMTkzMX0.mUDHLVKsCL6Jd-ZMvnYWBoyoNf3cKXpbVUuj4qHpHqg';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('Supabase client created (login)');
 
-    const emailInput = document.getElementById('loginEmail');
-    const passInput = document.getElementById('loginPassword');
-    const btn = document.getElementById('loginBtn');
-    const msgBox = document.getElementById('msgBox');
+        const emailInput = document.getElementById('loginEmail');
+        const passInput = document.getElementById('loginPassword');
+        const btn = document.getElementById('loginBtn');
+        const msgBox = document.getElementById('msgBox');
 
-    // redirect if already logged in
-    (async function checkSession() {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) window.location.href = 'nexvaulttrade_dashboard.html';
-    })();
-
-    function showMessage(text, type = 'error') {
-        msgBox.className = 'msg-box ' + type;
-        msgBox.textContent = text;
-        msgBox.style.display = 'block';
-    }
-    function hideMessage() {
-        msgBox.style.display = 'none';
-        msgBox.className = 'msg-box';
-    }
-
-    async function handleLogin() {
-        hideMessage();
-        const email = emailInput.value.trim();
-        const password = passInput.value;
-
-        if (!email || !password) return showMessage('Please fill in all fields.', 'error');
-
-        btn.disabled = true;
-        btn.textContent = 'Logging in…';
-
-        try {
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-            if (error) {
-                // Supabase throws specific error for unconfirmed email
-                if (error.message && error.message.toLowerCase().includes('email not confirmed')) {
-                    return showMessage(
-                        '⚠️ Please verify your email before logging in. Check your inbox and click the confirmation link.',
-                        'error'
-                    );
-                }
-                return showMessage(error.message, 'error');
+        // redirect if already logged in
+        (async function checkSession() {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) window.location.href = 'nexvaulttrade_dashboard.html';
+            } catch (e) {
+                console.warn('Session check error:', e);
             }
+        })();
 
-            // Success – user is logged in and email is confirmed (because Supabase wouldn't allow otherwise)
-            window.location.href = 'nexvaulttrade_dashboard.html';
-
-        } catch (err) {
-            console.error(err);
-            showMessage('Unexpected error. Please try again.', 'error');
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Login';
+        function showMessage(text, type = 'error') {
+            msgBox.className = 'msg-box ' + type;
+            msgBox.textContent = text;
+            msgBox.style.display = 'block';
         }
-    }
+        function hideMessage() {
+            msgBox.style.display = 'none';
+            msgBox.className = 'msg-box';
+        }
 
-    // Forgot password
-    async function handleForgotPassword() {
-        const email = emailInput.value.trim();
-        if (!email) return showMessage('Please enter your email address first.', 'error');
+        async function handleLogin() {
+            console.log('Login button clicked');
+            hideMessage();
+            const email = emailInput.value.trim();
+            const password = passInput.value;
 
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: 'https://nexvaulttrade.site/reset-password'
+            if (!email || !password) return showMessage('Please fill in all fields.', 'error');
+
+            btn.disabled = true;
+            btn.textContent = 'Logging in…';
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+                if (error) {
+                    if (error.message && error.message.toLowerCase().includes('email not confirmed')) {
+                        return showMessage(
+                            '⚠️ Please verify your email before logging in. Check your inbox and click the confirmation link.',
+                            'error'
+                        );
+                    }
+                    return showMessage(error.message, 'error');
+                }
+
+                window.location.href = 'nexvaulttrade_dashboard.html';
+
+            } catch (err) {
+                console.error(err);
+                showMessage('Unexpected error. Please try again.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Login';
+            }
+        }
+
+        async function handleForgotPassword() {
+            const email = emailInput.value.trim();
+            if (!email) return showMessage('Please enter your email address first.', 'error');
+
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: 'https://nexvaulttrade.onrender.com/reset-password.html'
+                });
+
+                if (error) return showMessage(error.message, 'error');
+                showMessage('📧 Password reset email sent! Check your inbox.', 'success');
+            } catch (e) {
+                showMessage('Unexpected error sending reset email.', 'error');
+            }
+        }
+
+        btn.addEventListener('click', handleLogin);
+        document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+        document.getElementById('forgotLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            handleForgotPassword();
         });
 
-        if (error) return showMessage(error.message, 'error');
-        showMessage('📧 Password reset email sent! Check your inbox.', 'success');
-    }
-
-    // Wire events
-    document.getElementById('loginBtn').addEventListener('click', handleLogin);
-    document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
-    document.getElementById('forgotLink').addEventListener('click', (e) => {
-        e.preventDefault();
-        handleForgotPassword();
+        // Check for pending verification message
+        (function checkUrlParam() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('verified') === 'pending') {
+                showMessage('📩 Your account is created. Please verify your email before logging in.', 'info');
+            }
+        })();
     });
-
-    // Check for pending verification message (from signup redirect)
-    (function checkUrlParam() {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('verified') === 'pending') {
-            showMessage('📩 Your account is created. Please verify your email before logging in.', 'info');
-        }
-    })();
 </script>
 </body>
 </html>
