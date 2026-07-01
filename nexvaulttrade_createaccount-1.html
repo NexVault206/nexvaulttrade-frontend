@@ -117,16 +117,17 @@
                 }
 
                 showMessage(
-                    '✅ Account created! Please check your email inbox and click the verification link to activate your account. Then log in.',
+                    '✅ Account created! Sending you to verification...',
                     'success'
                 );
                 btn.disabled = true;
-                btn.textContent = 'Check your email 📧';
+                btn.textContent = 'Redirecting…';
+                localStorage.setItem('pending_verify_email', email);
                 nameInput.value = emailInput.value = passInput.value = confirmInput.value = '';
 
                 setTimeout(() => {
-                    window.location.href = 'nexvaulttrade_login.html?verified=pending';
-                }, 4000);
+                    window.location.href = 'nexvaulttrade_verify.html?email=' + encodeURIComponent(email);
+                }, 1200);
 
             } catch (err) {
                 console.error(err);
