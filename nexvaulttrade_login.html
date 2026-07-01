@@ -65,6 +65,11 @@
         // redirect if already logged in
         (async function checkSession() {
             try {
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('logout') === '1') {
+                    await supabase.auth.signOut();
+                    return;
+                }
                 const { data: { session } } = await supabase.auth.getSession();
                 if (session) window.location.href = 'nexvaulttrade_dashboard.html';
             } catch (e) {

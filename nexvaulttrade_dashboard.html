@@ -1169,7 +1169,14 @@
         const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
         if (profile) {
             // Update name
-            const displayName = (profile.full_name || session.user.email.split('@')[0]).toUpperCase();
+            // Try profile name, then auth metadata, then email prefix
+            const nameFromMeta = session.user.user_metadata?.full_name || session.user.user_metadata?.name || '';
+            const rawName = profile.full_name || nameFromMeta || session.user.email.split('@')[0];
+            // Also save it back to profile if missing
+            if (!profile.full_name && nameFromMeta) {
+                await sb.from('profiles').update({ full_name: nameFromMeta }).eq('id', session.user.id);
+            }
+            const displayName = rawName.toUpperCase();
             const nameEl = document.getElementById('userName');
             if (nameEl) nameEl.textContent = displayName;
             const nameAlt = document.getElementById('userNameAlt');
