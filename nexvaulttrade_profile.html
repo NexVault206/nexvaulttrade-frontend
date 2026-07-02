@@ -237,8 +237,8 @@
         <span class="back-link" id="backToDashboard"><i class="fas fa-arrow-left"></i> Dashboard</span>
 
         <div class="profile-header">
-            <div class="profile-avatar">TO</div>
-            <div class="profile-name-large">TOWOBOLAOYELADE</div>
+            <div class="profile-avatar" id="profileAvatar" style="opacity:0.4;">…</div>
+            <div class="profile-name-large" id="profileNameLarge" style="opacity:0.4;">Loading…</div>
             <div class="profile-sub">Manage your personal information and preferences</div>
         </div>
 
@@ -246,7 +246,7 @@
             <!-- Full Name -->
             <div class="form-group">
                 <label>Full Name</label>
-                <input type="text" class="field-value" id="fullName" value="JHON DOE">
+                <input type="text" class="field-value" id="fullName" value="" placeholder="Enter your full name">
             </div>
 
             <!-- Email -->
@@ -319,7 +319,7 @@
             document.getElementById('country').value = profile.country || '';
             document.getElementById('address').value = profile.address || '';
             const initials = (profile.full_name || session.user.email).split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
-            document.querySelector('.profile-avatar').textContent = initials || 'U';
+            document.getElementById("profileAvatar").textContent = initials;
             document.querySelector('.profile-name-large').textContent = profile.full_name || session.user.email;
         }
 
@@ -358,8 +358,8 @@
             else {
                 showToast('✅ Profile updated successfully!');
                 const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
-                document.querySelector('.profile-avatar').textContent = initials || 'U';
-                document.querySelector('.profile-name-large').textContent = fullName;
+                document.getElementById("profileAvatar").textContent = initials;
+                document.getElementById("profileNameLarge").textContent = fullName;
             }
             btn.disabled = false; btn.textContent = 'Update Profile';
         });

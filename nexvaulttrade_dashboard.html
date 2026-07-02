@@ -1169,7 +1169,17 @@
         const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
         if (profile) {
             // Update name
-            const displayName = (profile.full_name || session.user.email.split('@')[0]).toUpperCase();
+            const fullName = (profile && profile.full_name) ? profile.full_name : session.user.email.split('@')[0];
+            const firstName = fullName.split(' ')[0];
+            const nameEl = document.getElementById('userName');
+            if (nameEl) nameEl.textContent = firstName;
+            const nameAlt = document.getElementById('userNameAlt');
+            if (nameAlt) nameAlt.textContent = fullName.toUpperCase();
+            const refLink = document.getElementById('refLink');
+            if (refLink) refLink.textContent = 'https://NexvaultTrade.com/' + fullName.replace(/s+/g,'_').toUpperCase();
+            const updatedEl = document.querySelector('.balance-updated');
+            if (updatedEl) updatedEl.textContent = 'Last updated: ' + new Date().toLocaleString('en-US', {month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+            const displayName = fullName;
             const nameEl = document.getElementById('userName');
             if (nameEl) nameEl.textContent = displayName;
             const nameAlt = document.getElementById('userNameAlt');
@@ -1177,7 +1187,7 @@
             const refLink = document.getElementById('refLink');
             if (refLink) refLink.textContent = 'https://NexvaultTrade.com/' + displayName.replace(/\s+/g,'_');
             // Update balance
-            const balEl = document.getElementById('userBalance');
+            const balEl = document.getElementById("balanceAmount");
             if (balEl) balEl.textContent = '$' + (profile.balance || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
             // Update verified status
             const badge = document.getElementById('accountBadge');

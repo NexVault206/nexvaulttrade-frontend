@@ -116,6 +116,15 @@
                     return showMessage(error.message, 'error');
                 }
 
+                // Save full_name into profiles table right away
+                if (data && data.user) {
+                    await supabase.from('profiles').upsert({
+                        id: data.user.id,
+                        full_name: name,
+                        email: email
+                    }, { onConflict: 'id' });
+                }
+
                 // Sign out immediately so user must login manually
                 await supabase.auth.signOut();
 
