@@ -62,12 +62,14 @@
         const btn = document.getElementById('loginBtn');
         const msgBox = document.getElementById('msgBox');
 
-        // redirect if already logged in
+        // Handle logout param or check session
         (async function checkSession() {
             try {
                 const params = new URLSearchParams(window.location.search);
                 if (params.get('logout') === '1') {
                     await supabase.auth.signOut();
+                    // Remove param from URL
+                    window.history.replaceState({}, '', window.location.pathname);
                     return;
                 }
                 const { data: { session } } = await supabase.auth.getSession();
@@ -104,9 +106,12 @@
                 if (error) {
                     if (error.message && error.message.toLowerCase().includes('email not confirmed')) {
                         return showMessage(
-                            '⚠️ Please verify your email before logging in. Check your inbox and click the confirmation link.',
+                            '⚠️ Email not confirmed. Please check your inbox for a verification code or contact support.',
                             'error'
                         );
+                    }
+                    if (error.message && error.message.toLowerCase().includes('invalid login')) {
+                        return showMessage('❌ Invalid email or password. Please try again.', 'error');
                     }
                     return showMessage(error.message, 'error');
                 }

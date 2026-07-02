@@ -217,6 +217,7 @@
         .nav-item i{font-size:20px;}
         .nav-item.active,.nav-item:hover{color:var(--accent);}
     </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="app-container">
@@ -280,6 +281,9 @@
 
             <!-- Update Button -->
             <button type="submit" class="btn-primary" id="updateProfileBtn">Update Profile</button>
+            <button type="button" id="logoutBtn" style="width:100%;margin-top:12px;background:#2a1515;color:#ef4444;border:1px solid #ef4444;border-radius:30px;padding:14px;font-weight:700;font-size:1rem;cursor:pointer;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
         </form>
     </div>
 </div>
@@ -295,7 +299,30 @@
 </nav>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    const SUPABASE_URL = 'https://vysinfcvhbluqaozerhu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5c2luZmN2aGJsdXFhb3plcmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzY0MjcsImV4cCI6MjA5NzkxMjQyN30.Q-jWKEBT_sizilXUn9vF7G7qsGWFlSbIAR40HpwaiX8';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.addEventListener('DOMContentLoaded', async function() {
+
+        // ── AUTH CHECK ──────────────────────────────────────────
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session) { window.location.href = 'nexvaulttrade_login.html'; return; }
+
+        // ── LOAD USER PROFILE ───────────────────────────────────
+        const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+        if (profile) {
+            document.getElementById('fullName').value = profile.full_name || '';
+            document.getElementById('email').value = session.user.email || '';
+            document.getElementById('phone').value = profile.phone || '';
+            document.getElementById('dob').value = profile.dob || '';
+            document.getElementById('country').value = profile.country || '';
+            document.getElementById('address').value = profile.address || '';
+            const initials = (profile.full_name || session.user.email).split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+            document.querySelector('.profile-avatar').textContent = initials || 'U';
+            document.querySelector('.profile-name-large').textContent = profile.full_name || session.user.email;
+        }
+
         // Theme toggle
         document.getElementById('themeToggle').addEventListener('click', function() {
             document.body.classList.toggle('light');
@@ -309,27 +336,39 @@
             window.location.href = 'nexvaulttrade_dashboard.html';
         });
 
-        // Update profile
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
+        // ── UPDATE PROFILE ──────────────────────────────────────
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const fullName = document.getElementById('fullName').value.trim();
-            const email = document.getElementById('email').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const dob = document.getElementById('dob').value;
             const country = document.getElementById('country').value.trim();
             const address = document.getElementById('address').value.trim();
 
-            // Simple validation
-            if (!fullName || !email || !phone) {
-                showToast('Please fill in all required fields.');
-                return;
+            if (!fullName || !phone) { showToast('Please fill in required fields.'); return; }
+
+            const btn = document.getElementById('updateProfileBtn');
+            btn.disabled = true; btn.textContent = 'Saving...';
+
+            const { error } = await sb.from('profiles').update({
+                full_name: fullName, phone, dob, country, address
+            }).eq('id', session.user.id);
+
+            if (error) { showToast('❌ Update failed: ' + error.message); }
+            else {
+                showToast('✅ Profile updated successfully!');
+                const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
+                document.querySelector('.profile-avatar').textContent = initials || 'U';
+                document.querySelector('.profile-name-large').textContent = fullName;
             }
-           // Simulate update
-            showToast('✅ Profile updated successfully!');
-            // Optionally update the avatar initials
-            const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase();
-            document.querySelector('.profile-avatar').textContent = initials || 'U';
-            document.querySelector('.profile-name-large').textContent = fullName;
+            btn.disabled = false; btn.textContent = 'Update Profile';
+        });
+
+        // ── LOGOUT ──────────────────────────────────────────────
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            this.textContent = 'Logging out...';
+            await sb.auth.signOut();
+            window.location.href = 'nexvaulttrade_login.html';
         });
 
         // Toast helper
@@ -342,9 +381,6 @@
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 2800);
         }
-
-        // If there's a stored user profile in localStorage, we could pre-fill,
-        // but we keep the static values as in the image.
     });
 </script>
 </body>

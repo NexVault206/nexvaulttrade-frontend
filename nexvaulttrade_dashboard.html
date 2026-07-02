@@ -1156,8 +1156,8 @@
     // ===== END KYC =====
 
     // ===== SUPABASE AUTH + USER DATA =====
-    const SUPABASE_URL = 'https://vfpxnywxciwxldbhlqhp.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcHhueXd4Y2l3eGxkYmhscWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MzU5MzEsImV4cCI6MjA5ODIxMTkzMX0.mUDHLVKsCL6Jd-ZMvnYWBoyoNf3cKXpbVUuj4qHpHqg';
+    const SUPABASE_URL = 'https://vysinfcvhbluqaozerhu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5c2luZmN2aGJsdXFhb3plcmh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMzY0MjcsImV4cCI6MjA5NzkxMjQyN30.Q-jWKEBT_sizilXUn9vF7G7qsGWFlSbIAR40HpwaiX8';
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     async function loadUserData() {
@@ -1169,14 +1169,7 @@
         const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
         if (profile) {
             // Update name
-            // Try profile name, then auth metadata, then email prefix
-            const nameFromMeta = session.user.user_metadata?.full_name || session.user.user_metadata?.name || '';
-            const rawName = profile.full_name || nameFromMeta || session.user.email.split('@')[0];
-            // Also save it back to profile if missing
-            if (!profile.full_name && nameFromMeta) {
-                await sb.from('profiles').update({ full_name: nameFromMeta }).eq('id', session.user.id);
-            }
-            const displayName = rawName.toUpperCase();
+            const displayName = (profile.full_name || session.user.email.split('@')[0]).toUpperCase();
             const nameEl = document.getElementById('userName');
             if (nameEl) nameEl.textContent = displayName;
             const nameAlt = document.getElementById('userNameAlt');
@@ -1202,6 +1195,14 @@
         }
     }
     loadUserData();
+
+    // ===== LOGOUT =====
+    async function logoutUser() {
+        await sb.auth.signOut();
+        window.location.href = 'nexvaulttrade_login.html';
+    }
+    // Make logout available globally
+    window.logoutUser = logoutUser;
 
     // Message admin button
     document.getElementById('messageFloatBtn').addEventListener('click', () => {
