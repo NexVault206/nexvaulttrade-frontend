@@ -116,18 +116,20 @@
                     return showMessage(error.message, 'error');
                 }
 
+                // Sign out immediately so user must login manually
+                await supabase.auth.signOut();
+
                 showMessage(
-                    '✅ Account created! Sending you to verification...',
+                    '✅ Account created! Please login to continue.',
                     'success'
                 );
                 btn.disabled = true;
                 btn.textContent = 'Redirecting…';
-                localStorage.setItem('pending_verify_email', email);
                 nameInput.value = emailInput.value = passInput.value = confirmInput.value = '';
 
                 setTimeout(() => {
-                    window.location.href = 'nexvaulttrade_verify.html?email=' + encodeURIComponent(email);
-                }, 1200);
+                    window.location.href = 'nexvaulttrade_login.html';
+                }, 1500);
 
             } catch (err) {
                 console.error(err);
