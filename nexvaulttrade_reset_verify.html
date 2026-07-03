@@ -7,87 +7,21 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, Arial, sans-serif;
-    background: #0a0a0a;
-    color: #fff;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .card {
-    background: #111;
-    border: 1px solid #c9a84c44;
-    border-radius: 16px;
-    padding: 35px 25px;
-    max-width: 420px;
-    width: 100%;
-    text-align: center;
-  }
-  .logo {
-    font-size: 22px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    background: linear-gradient(135deg,#c9a84c,#f5d77e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 8px;
-  }
+  body { font-family: -apple-system, Arial, sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .card { background: #111; border: 1px solid #c9a84c44; border-radius: 16px; padding: 35px 25px; max-width: 420px; width: 100%; text-align: center; }
+  .logo { font-size: 22px; font-weight: bold; letter-spacing: 2px; background: linear-gradient(135deg,#c9a84c,#f5d77e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
   h1 { font-size: 20px; margin-bottom: 8px; color: #f5d77e; }
   p.sub { color: #999; font-size: 14px; margin-bottom: 25px; }
-  .otp-inputs {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-  .otp-inputs input {
-    width: 45px;
-    height: 55px;
-    text-align: center;
-    font-size: 22px;
-    background: #1a1a1a;
-    border: 1px solid #c9a84c66;
-    border-radius: 8px;
-    color: #fff;
-  }
+  .otp-inputs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+  .otp-inputs input { width: 45px; height: 55px; text-align: center; font-size: 22px; background: #1a1a1a; border: 1px solid #c9a84c66; border-radius: 8px; color: #fff; }
   .otp-inputs input:focus { outline: none; border-color: #c9a84c; }
-  input.text-input {
-    width: 100%;
-    padding: 14px;
-    background: #1a1a1a;
-    border: 1px solid #c9a84c44;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 15px;
-    margin-bottom: 14px;
-    text-align: left;
-  }
+  input.text-input { width: 100%; padding: 14px; background: #1a1a1a; border: 1px solid #c9a84c44; border-radius: 8px; color: #fff; font-size: 15px; margin-bottom: 14px; text-align: left; }
   input.text-input:focus { outline: none; border-color: #c9a84c; }
-  button {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg,#c9a84c,#f5d77e);
-    border: none;
-    border-radius: 8px;
-    color: #0a0a0a;
-    font-weight: bold;
-    font-size: 15px;
-    cursor: pointer;
-    margin-top: 5px;
-  }
+  button { width: 100%; padding: 14px; background: linear-gradient(135deg,#c9a84c,#f5d77e); border: none; border-radius: 8px; color: #0a0a0a; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 5px; }
   button:disabled { opacity: 0.6; }
   .resend { margin-top: 18px; font-size: 13px; color: #888; }
-  .resend a { color: #c9a84c; text-decoration: none; }
-  .msg {
-    margin-top: 16px;
-    font-size: 13px;
-    padding: 10px;
-    border-radius: 8px;
-    display: none;
-  }
+  .resend a { color: #c9a84c; text-decoration: none; cursor: pointer; }
+  .msg { margin-top: 16px; font-size: 13px; padding: 10px; border-radius: 8px; display: none; }
   .msg.error { background: #3a1414; color: #ff8a8a; display: block; }
   .msg.success { background: #14301a; color: #8aff9e; display: block; }
   .msg.info { background: #1a2433; color: #8ac6ff; display: block; }
@@ -95,165 +29,89 @@
 </style>
 </head>
 <body>
-
 <div class="card">
   <div class="logo">NEXVAULTTRADE</div>
-
-  <!-- STEP 1: CODE -->
   <div id="codeStep">
     <h1>Enter Reset Code</h1>
     <p class="sub" id="subText">Enter the 6-digit code sent to your email.</p>
-
     <div class="otp-inputs">
-      <input type="text" maxlength="1" inputmode="numeric">
-      <input type="text" maxlength="1" inputmode="numeric">
-      <input type="text" maxlength="1" inputmode="numeric">
-      <input type="text" maxlength="1" inputmode="numeric">
-      <input type="text" maxlength="1" inputmode="numeric">
-      <input type="text" maxlength="1" inputmode="numeric">
+      <input type="tel" maxlength="1">
+      <input type="tel" maxlength="1">
+      <input type="tel" maxlength="1">
+      <input type="tel" maxlength="1">
+      <input type="tel" maxlength="1">
+      <input type="tel" maxlength="1">
     </div>
-
     <button id="verifyBtn">Verify Code</button>
-
-    <div class="resend">
-      Didn't get the code? <a href="#" id="resendLink">Resend code</a>
-    </div>
+    <div class="resend">Didn't get the code? <a id="resendLink">Resend code</a></div>
   </div>
-
-  <!-- STEP 2: NEW PASSWORD -->
   <div id="passwordStep" class="hidden">
     <h1>Set New Password</h1>
     <p class="sub">Choose a strong new password for your account.</p>
-
-    <input type="password" class="text-input" id="newPassword" placeholder="New password" autocomplete="new-password">
-    <input type="password" class="text-input" id="confirmPassword" placeholder="Confirm new password" autocomplete="new-password">
-
+    <input type="password" class="text-input" id="newPassword" placeholder="New password">
+    <input type="password" class="text-input" id="confirmPassword" placeholder="Confirm new password">
     <button id="updateBtn">Update Password</button>
   </div>
-
   <div class="msg" id="msgBox"></div>
 </div>
-
 <script>
   const SUPABASE_URL = 'https://vfpxnywxciwxldbhlqhp.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcHhueXd4Y2l3eGxkYmhscWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MzU5MzEsImV4cCI6MjA5ODIxMTkzMX0.mUDHLVKsCL6Jd-ZMvnYWBoyoNf3cKXpbVUuj4qHpHqg';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
   document.addEventListener('DOMContentLoaded', function() {
-
     const params = new URLSearchParams(window.location.search);
     const email = params.get('email') || localStorage.getItem('pending_reset_email') || '';
-    document.getElementById('subText').textContent = email
-      ? `Enter the 6-digit code sent to ${email}`
-      : 'Enter the 6-digit code sent to your email.';
-
-    const codeStep = document.getElementById('codeStep');
-    const passwordStep = document.getElementById('passwordStep');
+    document.getElementById('subText').textContent = email ? 'Enter the 6-digit code sent to ' + email : 'Enter the 6-digit code sent to your email.';
     const inputs = document.querySelectorAll('.otp-inputs input');
-    const verifyBtn = document.getElementById('verifyBtn');
-    const resendLink = document.getElementById('resendLink');
-    const updateBtn = document.getElementById('updateBtn');
-    const newPassword = document.getElementById('newPassword');
-    const confirmPassword = document.getElementById('confirmPassword');
     const msgBox = document.getElementById('msgBox');
-
-    inputs.forEach((input, idx) => {
-      input.addEventListener('input', () => {
-        input.value = input.value.replace(/[^0-9]/g, '');
-        if (input.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+    function showMsg(text, type) { msgBox.textContent = text; msgBox.className = 'msg ' + type; }
+    inputs.forEach(function(input, idx) {
+      input.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        if (this.value && idx < inputs.length - 1) inputs[idx + 1].focus();
       });
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !input.value && idx > 0) inputs[idx - 1].focus();
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && !this.value && idx > 0) inputs[idx - 1].focus();
       });
-      input.addEventListener('paste', (e) => {
+      input.addEventListener('paste', function(e) {
         e.preventDefault();
         const text = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
-        text.split('').forEach((char, i) => {
-          if (inputs[i]) inputs[i].value = char;
-        });
+        text.split('').forEach(function(char, i) { if (inputs[i]) inputs[i].value = char; });
         if (inputs[Math.min(text.length, 5)]) inputs[Math.min(text.length, 5)].focus();
       });
     });
-
-    function showMessage(text, type) {
-      msgBox.textContent = text;
-      msgBox.className = 'msg ' + type;
-    }
-
-    async function handleVerify() {
-      const code = Array.from(inputs).map(i => i.value).join('');
-      if (code.length !== 6) return showMessage('Please enter all 6 digits.', 'error');
-      if (!email) return showMessage('Email not found. Please restart password reset.', 'error');
-
-      verifyBtn.disabled = true;
-      verifyBtn.textContent = 'Verifying...';
-
-      const { data, error } = await supabase.auth.verifyOtp({
-        email: email,
-        token: code,
-        type: 'recovery'
-      });
-
-      verifyBtn.disabled = false;
-      verifyBtn.textContent = 'Verify Code';
-
-      if (error) {
-        showMessage(error.message, 'error');
-        return;
-      }
-
-      msgBox.className = 'msg';
+    document.getElementById('verifyBtn').addEventListener('click', async function() {
+      const code = Array.from(inputs).map(function(i) { return i.value; }).join('');
+      if (code.length !== 6) return showMsg('Please enter all 6 digits.', 'error');
+      if (!email) return showMsg('Email not found. Please restart password reset.', 'error');
+      this.disabled = true; this.textContent = 'Verifying...';
+      const { error } = await supabase.auth.verifyOtp({ email: email, token: code, type: 'recovery' });
+      this.disabled = false; this.textContent = 'Verify Code';
+      if (error) { showMsg(error.message, 'error'); return; }
       msgBox.style.display = 'none';
-      codeStep.classList.add('hidden');
-      passwordStep.classList.remove('hidden');
-    }
-
-    async function handleUpdatePassword() {
-      const pass = newPassword.value;
-      const confirm = confirmPassword.value;
-
-      if (!pass || !confirm) return showMessage('Please fill in both fields.', 'error');
-      if (pass.length < 6) return showMessage('Password must be at least 6 characters.', 'error');
-      if (pass !== confirm) return showMessage('Passwords do not match.', 'error');
-
-      updateBtn.disabled = true;
-      updateBtn.textContent = 'Updating...';
-
-      const { error } = await supabase.auth.updateUser({ password: pass });
-
-      updateBtn.disabled = false;
-      updateBtn.textContent = 'Update Password';
-
-      if (error) {
-        showMessage(error.message, 'error');
-        return;
-      }
-
-      localStorage.removeItem('pending_reset_email');
-      showMessage('✅ Password updated! Redirecting to login...', 'success');
-      setTimeout(() => {
-        window.location.href = 'nexvaulttrade_login.html';
-      }, 1500);
-    }
-
-    async function handleResend() {
-      if (!email) return showMessage('Email not found.', 'error');
-      showMessage('Sending new code...', 'info');
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
-      if (error) {
-        showMessage(error.message, 'error');
-      } else {
-        showMessage('📩 New code sent! Check your email.', 'success');
-      }
-    }
-
-    verifyBtn.addEventListener('click', handleVerify);
-    updateBtn.addEventListener('click', handleUpdatePassword);
-    resendLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      handleResend();
+      document.getElementById('codeStep').classList.add('hidden');
+      document.getElementById('passwordStep').classList.remove('hidden');
     });
-
+    document.getElementById('updateBtn').addEventListener('click', async function() {
+      const pass = document.getElementById('newPassword').value;
+      const confirm = document.getElementById('confirmPassword').value;
+      if (!pass || !confirm) return showMsg('Please fill in both fields.', 'error');
+      if (pass.length < 6) return showMsg('Password must be at least 6 characters.', 'error');
+      if (pass !== confirm) return showMsg('Passwords do not match.', 'error');
+      this.disabled = true; this.textContent = 'Updating...';
+      const { error } = await supabase.auth.updateUser({ password: pass });
+      this.disabled = false; this.textContent = 'Update Password';
+      if (error) { showMsg(error.message, 'error'); return; }
+      localStorage.removeItem('pending_reset_email');
+      showMsg('Password updated! Redirecting to login...', 'success');
+      setTimeout(function() { window.location.href = 'nexvaulttrade_login.html'; }, 1500);
+    });
+    document.getElementById('resendLink').addEventListener('click', async function() {
+      if (!email) return showMsg('Email not found.', 'error');
+      showMsg('Sending new code...', 'info');
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) { showMsg(error.message, 'error'); } else { showMsg('New code sent! Check your email.', 'success'); }
+    });
   });
 </script>
 </body>
