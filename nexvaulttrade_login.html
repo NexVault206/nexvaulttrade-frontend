@@ -28,6 +28,13 @@
         .back-home a { color: #f5a623; text-decoration: none; font-weight: 500; }
         .back-home a:hover { text-decoration: underline; }
         @media (max-width: 520px) { .login-card { padding: 28px 20px; } }
+        .hidden { display: none !important; }
+        .otp-inputs { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+        .otp-inputs input { width: 44px; height: 52px; text-align: center; font-size: 1.4rem; font-weight: 700; border-radius: 14px; padding: 0; margin: 0; border: 2px solid #2d354c; background: #1a1f2c; color: #fff; }
+        .otp-inputs input:focus { border-color: #f5a623; }
+        .resend-link { text-align: center; margin-top: 12px; color: #9ca3af; font-size: 0.85rem; }
+        .resend-link button { background: none; border: none; color: #f5a623; font-weight: 600; cursor: pointer; font-size: 0.85rem; width: auto; padding: 0; margin: 0; text-decoration: underline; }
+        .resend-link button:disabled { color: #555; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -47,6 +54,24 @@
         <a href="#" id="forgotLink">Forgot Password?</a>
     </div>
     <div class="back-home"><a href="nexvaulttrade_index.html">← Back to Home</a></div>
+</div>
+
+<div id="otpVerifyCard" class="login-card hidden" style="margin-top:16px;">
+    <div class="logo"><span>NexVaultTrade</span></div>
+    <h1 style="font-size:1.4rem;">Verify Your Email</h1>
+    <p class="sub" id="otpVerifySub">Enter the 6-digit code sent to your email.</p>
+    <div class="otp-inputs">
+        <input type="tel" maxlength="1" class="v-digit" id="v1">
+        <input type="tel" maxlength="1" class="v-digit" id="v2">
+        <input type="tel" maxlength="1" class="v-digit" id="v3">
+        <input type="tel" maxlength="1" class="v-digit" id="v4">
+        <input type="tel" maxlength="1" class="v-digit" id="v5">
+        <input type="tel" maxlength="1" class="v-digit" id="v6">
+    </div>
+    <div class="msg-box" id="otpMsgBox"></div>
+    <button type="button" id="otpVerifyBtn">Verify and Login</button>
+    <div class="resend-link">Didn't get the code? <button id="otpResendBtn" disabled>Resend</button> <span id="otpTimer">in 60s</span></div>
+    <div style="text-align:center;margin-top:16px;"><a href="#" id="backToLoginLink" style="color:#f5a623;font-size:0.85rem;">Back to Login</a></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -105,10 +130,15 @@
 
                 if (error) {
                     if (error.message && error.message.toLowerCase().includes('email not confirmed')) {
-                        return showMessage(
-                            '⚠️ Email not confirmed. Please check your inbox for a verification code or contact support.',
-                            'error'
-                        );
+                        pendingEmail = email;
+                        document.querySelector('.login-card').classList.add('hidden');
+                        document.getElementById('otpVerifyCard').classList.remove('hidden');
+                        document.getElementById('otpVerifySub').textContent = 'Enter the 6-digit code sent to ' + email;
+                        await supabase.auth.resend({ type: 'signup', email: email });
+                        showOtpMsg('Code sent to ' + email, 'info');
+                        startOtpTimer();
+                        document.getElementById('v1').focus();
+                        return;
                     }
                     if (error.message && error.message.toLowerCase().includes('invalid login')) {
                         return showMessage('❌ Invalid email or password. Please try again.', 'error');
@@ -134,13 +164,78 @@
             window.location.href = 'nexvaulttrade_forgot.html';
         });
 
-        // Check for pending verification message
         (function checkUrlParam() {
             const params = new URLSearchParams(window.location.search);
             if (params.get('verified') === 'pending') {
-                showMessage('📩 Your account is created. Please verify your email before logging in.', 'info');
+                showMessage('Your account is created. Please verify your email before logging in.', 'info');
             }
         })();
+
+        let pendingEmail = '';
+        let otpTimerInterval = null;
+
+        function showOtpMsg(text, type) {
+            const box = document.getElementById('otpMsgBox');
+            box.className = 'msg-box ' + type;
+            box.textContent = text;
+            box.style.display = 'block';
+        }
+
+        function startOtpTimer() {
+            const btn = document.getElementById('otpResendBtn');
+            const el = document.getElementById('otpTimer');
+            btn.disabled = true; let s = 60; el.textContent = 'in ' + s + 's';
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
+            otpTimerInterval = setInterval(function() {
+                s--;
+                if (s <= 0) { clearInterval(otpTimerInterval); btn.disabled = false; el.textContent = ''; }
+                else { el.textContent = 'in ' + s + 's'; }
+            }, 1000);
+        }
+
+        const vDigits = document.querySelectorAll('.v-digit');
+        vDigits.forEach(function(input, i) {
+            input.addEventListener('input', function() {
+                this.value = this.value.slice(-1).replace(/[^0-9]/g, '');
+                if (this.value && i < vDigits.length - 1) vDigits[i+1].focus();
+            });
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && i > 0) vDigits[i-1].focus();
+            });
+        });
+
+        document.getElementById('otpVerifyBtn').addEventListener('click', async function() {
+            const token = Array.from(vDigits).map(function(d) { return d.value; }).join('');
+            if (token.length < 6) return showOtpMsg('Please enter all 6 digits.', 'error');
+            this.disabled = true; this.textContent = 'Verifying...';
+            try {
+                const { error } = await supabase.auth.verifyOtp({ email: pendingEmail, token: token, type: 'signup' });
+                if (error) {
+                    this.disabled = false; this.textContent = 'Verify and Login';
+                    vDigits.forEach(function(d) { d.value = ''; }); vDigits[0].focus();
+                    return showOtpMsg(error.message, 'error');
+                }
+                showOtpMsg('Email verified! Logging you in...', 'success');
+                setTimeout(function() { window.location.href = 'nexvaulttrade_dashboard.html'; }, 1500);
+            } catch(e) {
+                this.disabled = false; this.textContent = 'Verify and Login';
+                showOtpMsg('Unexpected error. Please try again.', 'error');
+            }
+        });
+
+        document.getElementById('otpResendBtn').addEventListener('click', async function() {
+            this.disabled = true; document.getElementById('otpTimer').textContent = '...';
+            const { error } = await supabase.auth.resend({ type: 'signup', email: pendingEmail });
+            if (error) { showOtpMsg('Could not resend: ' + error.message, 'error'); }
+            else { showOtpMsg('New code sent!', 'info'); vDigits.forEach(function(d) { d.value = ''; }); vDigits[0].focus(); }
+            startOtpTimer();
+        });
+
+        document.getElementById('backToLoginLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('otpVerifyCard').classList.add('hidden');
+            document.querySelector('.login-card').classList.remove('hidden');
+        });
     });
 </script>
 </body>
