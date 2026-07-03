@@ -47,7 +47,7 @@
       const email = emailInput.value.trim();
       if (!email) return showMessage('Please enter your email.', 'error');
       sendBtn.disabled = true; sendBtn.textContent = 'Sending...';
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: undefined });
       sendBtn.disabled = false; sendBtn.textContent = 'Send Reset Code';
       if (error) { showMessage(error.message, 'error'); return; }
       localStorage.setItem('pending_reset_email', email);
