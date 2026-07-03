@@ -45,6 +45,7 @@ input:focus{border-color:var(--accent);}
 .action-btn.red{background:#2a1515;color:#ef4444;}
 .action-btn.yellow{background:#2a2a1a;color:#f59e0b;}
 .action-btn.blue{background:#1a1f2c;color:#60a5fa;}
+.action-btn.purple{background:#2a1a3a;color:#c084fc;}
 .bal-input{width:120px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;color:var(--text);font-size:0.85rem;outline:none;}
 .bal-input:focus{border-color:var(--accent);}
 
@@ -68,10 +69,25 @@ input:focus{border-color:var(--accent);}
 .empty{text-align:center;padding:40px;color:var(--text2);}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1a1f2c;color:var(--text);padding:12px 24px;border-radius:30px;border:1px solid var(--accent);z-index:9999;display:none;}
 .loading{text-align:center;padding:20px;color:var(--text2);}
-.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.stats-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
 .stats-bar .s{background:var(--card);border-radius:16px;padding:14px;text-align:center;border:1px solid var(--border);}
 .stats-bar .s .val{font-size:1.3rem;font-weight:800;color:var(--accent);}
 .stats-bar .s .lbl{font-size:0.7rem;color:var(--text2);margin-top:4px;}
+
+/* CHAT */
+.chat-user-list{max-height:300px;overflow-y:auto;margin-bottom:16px;}
+.chat-user-item{padding:10px 14px;background:var(--bg2);border-radius:12px;cursor:pointer;margin-bottom:6px;border:1px solid var(--border);transition:0.2s;}
+.chat-user-item:hover{background:var(--card);border-color:var(--accent);}
+.chat-user-item.active-chat{background:var(--card);border-color:var(--accent);}
+.chat-box{background:var(--bg2);border-radius:20px;padding:16px;max-height:400px;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;}
+.chat-msg{max-width:80%;padding:10px 14px;border-radius:16px;word-break:break-word;}
+.chat-msg.admin{background:var(--accent);color:#0A0E17;align-self:flex-end;}
+.chat-msg.user{background:var(--card);color:var(--text);align-self:flex-start;}
+.chat-msg .time{font-size:0.6rem;opacity:0.6;margin-left:8px;}
+.chat-input-wrap{display:flex;gap:8px;}
+.chat-input-wrap input{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:30px;padding:12px 16px;color:var(--text);outline:none;}
+.chat-input-wrap input:focus{border-color:var(--accent);}
+.chat-input-wrap button{background:var(--accent);border:none;padding:0 20px;border-radius:30px;font-weight:700;color:#0A0E17;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -105,6 +121,7 @@ input:focus{border-color:var(--accent);}
     <div class="s"><div class="val" id="statPending">0</div><div class="lbl">Pending</div></div>
     <div class="s"><div class="val" id="statWithdrawals">0</div><div class="lbl">Withdrawals</div></div>
     <div class="s"><div class="val" id="statMessages">0</div><div class="lbl">Messages</div></div>
+    <div class="s"><div class="val" id="statLocked">0</div><div class="lbl">Locked</div></div>
   </div>
 
   <div class="tabs">
@@ -112,6 +129,7 @@ input:focus{border-color:var(--accent);}
     <div class="tab" onclick="switchTab('deposits', this)">⬇ Deposits</div>
     <div class="tab" onclick="switchTab('withdrawals', this)">⬆ Withdrawals</div>
     <div class="tab" onclick="switchTab('messages', this)">✉ Messages</div>
+    <div class="tab" onclick="switchTab('chat', this)">💬 Chat</div>
   </div>
 
   <div class="tab-content active" id="tab-users">
@@ -126,11 +144,26 @@ input:focus{border-color:var(--accent);}
   <div class="tab-content" id="tab-messages">
     <div id="messagesList"><div class="loading">Loading messages...</div></div>
   </div>
+  <div class="tab-content" id="tab-chat">
+    <div id="chatContainer">
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <h4 style="margin-bottom:8px;">👤 Users</h4>
+          <div class="chat-user-list" id="chatUserList"></div>
+        </div>
+        <div style="flex:2;min-width:280px;">
+          <div id="chatWindow">
+            <div class="empty" style="padding:20px;">Select a user to start chatting.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- REPLY MODAL -->
+<!-- REPLY MODAL (for messages) -->
 <div id="replyOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;align-items:center;justify-content:center;">
   <div style="background:#131A2C;border-radius:24px;padding:24px;width:90%;max-width:400px;border:1px solid #1E293B;">
     <h3 style="margin-bottom:16px;color:#D4AF37;"><i class="fas fa-reply"></i> Reply to User</h3>
@@ -142,7 +175,6 @@ input:focus{border-color:var(--accent);}
     </div>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ── SUPABASE SETUP ──────────────────────────────────────────────
@@ -203,9 +235,10 @@ function switchTab(tab, el) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById(`tab-${tab}`).classList.add('active');
+  if (tab === 'chat') loadChatUsers();
 }
 
-function loadAll() { loadUsers(); loadDeposits(); loadWithdrawals(); loadMessages(); }
+function loadAll() { loadUsers(); loadDeposits(); loadWithdrawals(); loadMessages(); loadChatUsers(); }
 
 // ── USERS ───────────────────────────────────────────────────────
 async function loadUsers() {
@@ -213,10 +246,12 @@ async function loadUsers() {
     const { data: users, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
     if (error) throw error;
     document.getElementById('statUsers').textContent = users.length;
+    const lockedCount = users.filter(u => u.requires_additional_verification === true).length;
+    document.getElementById('statLocked').textContent = lockedCount;
     if (!users.length) { document.getElementById('usersList').innerHTML = '<div class="empty">No users yet</div>'; return; }
     document.getElementById('usersList').innerHTML = users.map(u => `
       <div class="user-card">
-        <div class="user-name">${u.full_name || u.email} ${u.is_verified ? '✅' : '⚠️'}</div>
+        <div class="user-name">${u.full_name || u.email} ${u.is_verified ? '✅' : '⚠️'} ${u.requires_additional_verification ? '🔒' : ''}</div>
         <div class="user-email">${u.email}</div>
         <div class="user-stats">
           <div class="stat">Balance: <span>$${(u.balance||0).toFixed(2)}</span></div>
@@ -229,6 +264,7 @@ async function loadUsers() {
         </div>
         <div class="actions">
           <button class="action-btn ${u.is_verified ? 'red' : 'green'}" onclick="toggleVerify('${u.id}', ${!u.is_verified})">${u.is_verified ? 'Unverify' : 'Verify'}</button>
+          <button class="action-btn ${u.requires_additional_verification ? 'green' : 'yellow'}" onclick="toggleLock('${u.id}', ${!u.requires_additional_verification})">${u.requires_additional_verification ? '🔓 Unlock' : '🔒 Lock'}</button>
           <button class="action-btn red" onclick="deleteUser('${u.id}', '${u.full_name || u.email}')">Delete</button>
         </div>
       </div>
@@ -248,6 +284,13 @@ async function toggleVerify(userId, state) {
   const { error } = await sb.from('profiles').update({ is_verified: state }).eq('id', userId);
   if (error) { showToast('Error: ' + error.message); return; }
   showToast(state ? 'User verified ✅' : 'User unverified'); loadUsers();
+}
+
+async function toggleLock(userId, state) {
+  // state = true means lock (requires_additional_verification = true), false means unlock
+  const { error } = await sb.from('profiles').update({ requires_additional_verification: state }).eq('id', userId);
+  if (error) { showToast('Error: ' + error.message); return; }
+  showToast(state ? 'User locked 🔒' : 'User unlocked 🔓'); loadUsers();
 }
 
 async function deleteUser(userId, name) {
@@ -290,10 +333,8 @@ async function loadDeposits() {
 }
 
 async function approveDeposit(txId, userId, amount) {
-  // Update transaction status
   const { error: txErr } = await sb.from('transactions').update({ status: 'approved' }).eq('id', txId);
   if (txErr) { showToast('Error: ' + txErr.message); return; }
-  // Add amount to user balance
   const { data: profile } = await sb.from('profiles').select('balance').eq('id', userId).single();
   const newBalance = (profile?.balance || 0) + amount;
   await sb.from('profiles').update({ balance: newBalance }).eq('id', userId);
@@ -308,7 +349,8 @@ async function loadWithdrawals() {
       .eq('type', 'withdrawal')
       .order('created_at', { ascending: false });
     if (error) throw error;
-    document.getElementById('statWithdrawals').textContent = data.filter(w => w.status === 'pending').length;
+    const pending = data.filter(w => w.status === 'pending');
+    document.getElementById('statWithdrawals').textContent = pending.length;
     if (!data.length) { document.getElementById('withdrawalsList').innerHTML = '<div class="empty">No withdrawals yet</div>'; return; }
     document.getElementById('withdrawalsList').innerHTML = data.map(w => `
       <div class="tx-card">
@@ -341,7 +383,6 @@ async function approveWithdrawal(txId) {
 async function rejectWithdrawal(txId, userId, amount) {
   const { error } = await sb.from('transactions').update({ status: 'rejected' }).eq('id', txId);
   if (error) { showToast('Error: ' + error.message); return; }
-  // Refund balance
   const { data: profile } = await sb.from('profiles').select('balance').eq('id', userId).single();
   const newBalance = (profile?.balance || 0) + amount;
   await sb.from('profiles').update({ balance: newBalance }).eq('id', userId);
@@ -363,7 +404,7 @@ async function loadMessages() {
         <div class="msg-body">${m.message}</div>
         <div class="msg-meta">${m.profiles?.full_name || ''} (${m.profiles?.email || ''}) • ${new Date(m.created_at).toLocaleDateString()}</div>
         <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="action-btn blue" onclick="openReply('${m.id}','${m.profiles?.email || ''}','${(m.subject||'').replace(/'/g,"\'")}')">✉ Reply</button>
+          <button class="action-btn blue" onclick="openReply('${m.id}','${m.profiles?.email || ''}','${(m.subject||'').replace(/'/g,"\\\'")}')">✉ Reply</button>
           ${!m.read ? `<button class="action-btn green" onclick="markRead('${m.id}')">✅ Mark Read</button>` : ''}
         </div>
       </div>
@@ -371,57 +412,155 @@ async function loadMessages() {
   } catch(e) { document.getElementById('messagesList').innerHTML = `<div class="empty">Error: ${e.message}</div>`; }
 }
 
-// ── TOAST ───────────────────────────────────────────────────────
+// ── REPLY SYSTEM ────────────────────────────────────────────────
+const BACKEND_URL = 'https://nexvaulttrade-backend-1.onrender.com';
+let currentReplyMsgId = null;
+let currentReplyEmail = null;
+
+function openReply(msgId, email, subject) {
+  currentReplyMsgId = msgId;
+  currentReplyEmail = email;
+  document.getElementById('replyTo').innerHTML = `To: <strong style="color:#EFF3FC;">${email}</strong> | Re: ${subject}`;
+  document.getElementById('replyBody').value = '';
+  document.getElementById('replyOverlay').style.display = 'flex';
+}
+
+function closeReply() {
+  document.getElementById('replyOverlay').style.display = 'none';
+  currentReplyMsgId = null;
+  currentReplyEmail = null;
+}
+
+async function sendReply() {
+  const body = document.getElementById('replyBody').value.trim();
+  if (!body) { showToast('Please type a reply'); return; }
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/messages/reply`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ toEmail: currentReplyEmail, message: body, msgId: currentReplyMsgId })
+    });
+    if (!res.ok) throw new Error('Failed');
+    await sb.from('admin_messages').update({ read: true }).eq('id', currentReplyMsgId);
+    showToast('Reply sent ✅');
+    closeReply();
+    loadMessages();
+  } catch(e) {
+    showToast('Failed to send reply. Check backend.');
+  }
+}
+
+async function markRead(msgId) {
+  await sb.from('admin_messages').update({ read: true }).eq('id', msgId);
+  showToast('Marked as read');
+  loadMessages();
+}
+
+// ── CHAT ─────────────────────────────────────────────────────────
+let currentChatUserId = null;
+let chatPollInterval = null;
+
+async function loadChatUsers() {
+  try {
+    // Get all users who have sent at least one chat message (distinct)
+    const { data: messages, error } = await sb.from('chat_messages')
+      .select('user_id, profiles(full_name, email)')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    const userIds = [...new Set(messages.map(m => m.user_id))];
+    const users = [];
+    for (const uid of userIds) {
+      const { data: profile } = await sb.from('profiles').select('id, full_name, email').eq('id', uid).single();
+      if (profile) users.push(profile);
+    }
+    const userList = document.getElementById('chatUserList');
+    if (!users.length) { userList.innerHTML = '<div class="empty">No chat users yet.</div>'; return; }
+    userList.innerHTML = users.map(u => `
+      <div class="chat-user-item ${currentChatUserId === u.id ? 'active-chat' : ''}" data-userid="${u.id}" onclick="openChat('${u.id}')">
+        ${u.full_name || u.email}
+      </div>
+    `).join('');
+  } catch(e) { console.error('Chat users error:', e); }
+}
+
+async function openChat(userId) {
+  currentChatUserId = userId;
+  // Update active highlight
+  document.querySelectorAll('.chat-user-item').forEach(el => el.classList.remove('active-chat'));
+  document.querySelector(`.chat-user-item[data-userid="${userId}"]`)?.classList.add('active-chat');
+  // Load messages
+  await loadChatMessages(userId);
+  // Start polling
+  if (chatPollInterval) clearInterval(chatPollInterval);
+  chatPollInterval = setInterval(() => loadChatMessages(userId, true), 3000);
+}
+
+async function loadChatMessages(userId, silent = false) {
+  try {
+    const { data, error } = await sb.from('chat_messages')
+      .select('*')
+      .or(`user_id.eq.${userId},admin_id.eq.${userId}`) // admin_id is the user id of admin? better: we have sender_type
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    const chatWin = document.getElementById('chatWindow');
+    if (!data.length) {
+      chatWin.innerHTML = `<div class="empty">No messages yet. Start a conversation.</div>`;
+      return;
+    }
+    // We'll consider admin messages where sender_type = 'admin'
+    // For simplicity, we assume the current admin is the one logged in (we'll store admin_id later)
+    // We'll just display messages with a flag
+    const adminId = (await sb.auth.getSession()).data.session?.user.id;
+    let html = `<div class="chat-box" id="chatBox">`;
+    data.forEach(msg => {
+      const isAdmin = msg.admin_id === adminId;
+      html += `<div class="chat-msg ${isAdmin ? 'admin' : 'user'}">
+        ${msg.message}
+        <span class="time">${new Date(msg.created_at).toLocaleTimeString()}</span>
+      </div>`;
+    });
+    html += `</div>
+      <div class="chat-input-wrap">
+        <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+        <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+      </div>`;
+    chatWin.innerHTML = html;
+    // Scroll to bottom
+    const box = document.getElementById('chatBox');
+    if (box) box.scrollTop = box.scrollHeight;
+  } catch(e) {
+    if (!silent) console.error('Chat load error:', e);
+  }
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  if (!input) return;
+  const msg = input.value.trim();
+  if (!msg || !currentChatUserId) { showToast('Select a user and type a message.'); return; }
+  const adminId = (await sb.auth.getSession()).data.session?.user.id;
+  if (!adminId) { showToast('Admin not logged in.'); return; }
+  try {
+    const { error } = await sb.from('chat_messages').insert({
+      user_id: currentChatUserId,
+      admin_id: adminId,
+      message: msg,
+      sender_type: 'admin',
+      created_at: new Date().toISOString()
+    });
+    if (error) throw error;
+    input.value = '';
+    await loadChatMessages(currentChatUserId);
+  } catch(e) {
+    showToast('Error sending message: ' + e.message);
+  }
+}
+  // ── TOAST ───────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.style.display = 'block';
   setTimeout(() => t.style.display = 'none', 3000);
 }
-
-// ── REPLY SYSTEM ────────────────────────────────────────────────
-    const BACKEND_URL = 'https://nexvaulttrade-backend-1.onrender.com';
-    let currentReplyMsgId = null;
-    let currentReplyEmail = null;
-
-    function openReply(msgId, email, subject) {
-        currentReplyMsgId = msgId;
-        currentReplyEmail = email;
-        document.getElementById('replyTo').innerHTML = `To: <strong style="color:#EFF3FC;">${email}</strong> | Re: ${subject}`;
-        document.getElementById('replyBody').value = '';
-        document.getElementById('replyOverlay').style.display = 'flex';
-    }
-
-    function closeReply() {
-        document.getElementById('replyOverlay').style.display = 'none';
-        currentReplyMsgId = null;
-        currentReplyEmail = null;
-    }
-
-    async function sendReply() {
-        const body = document.getElementById('replyBody').value.trim();
-        if (!body) { showToast('Please type a reply'); return; }
-        try {
-            const res = await fetch(`${BACKEND_URL}/api/messages/reply`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ toEmail: currentReplyEmail, message: body, msgId: currentReplyMsgId })
-            });
-            if (!res.ok) throw new Error('Failed');
-            // Mark as read
-            await sb.from('admin_messages').update({ read: true }).eq('id', currentReplyMsgId);
-            showToast('Reply sent ✅');
-            closeReply();
-            loadMessages();
-        } catch(e) {
-            showToast('Failed to send reply. Check backend.');
-        }
-    }
-
-    async function markRead(msgId) {
-        await sb.from('admin_messages').update({ read: true }).eq('id', msgId);
-        showToast('Marked as read');
-        loadMessages();
-    }
 
 // Enter key login
 document.addEventListener('keydown', e => {
