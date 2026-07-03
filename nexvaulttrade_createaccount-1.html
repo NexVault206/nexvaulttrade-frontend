@@ -3,163 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account — NexVaultTrade</title>
+    <title>Create Account - NexVaultTrade</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: linear-gradient(145deg, #07090f, #0a0c12); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .signup-card { background: #0f121b; padding: 40px 42px; border-radius: 48px; width: 480px; max-width: 100%; border: 1px solid #2a3145; box-shadow: 0 25px 45px rgba(0,0,0,0.6); }
+        body { background: linear-gradient(145deg, #07090f, #0a0c12); font-family: Inter, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .card { background: #0f121b; padding: 40px 42px; border-radius: 48px; width: 480px; max-width: 100%; border: 1px solid #2a3145; box-shadow: 0 25px 45px rgba(0,0,0,0.6); }
         .logo { text-align: center; margin-bottom: 28px; }
-        .logo span { color: #f5a623; font-size: 1.6rem; font-weight: 800; letter-spacing: 1px; }
-        .signup-card h1 { color: #f5a623; font-weight: 700; font-size: 1.8rem; margin-bottom: 6px; }
+        .logo span { color: #f5a623; font-size: 1.6rem; font-weight: 800; }
+        h1 { color: #f5a623; font-weight: 700; font-size: 1.8rem; margin-bottom: 6px; }
         .sub { color: #9ca3af; margin-bottom: 20px; font-size: 0.95rem; }
-        .bonus-note { background: #1e2a3a; padding: 12px 16px; border-radius: 30px; text-align: center; margin: 0 0 18px 0; color: #f5a623; font-weight: 600; font-size: 0.95rem; }
+        .bonus { background: #1e2a3a; padding: 12px 16px; border-radius: 30px; text-align: center; margin: 0 0 18px; color: #f5a623; font-weight: 600; font-size: 0.95rem; }
         input { width: 100%; padding: 14px 18px; margin: 6px 0; background: #1a1f2c; border: 1px solid #2d354c; border-radius: 30px; color: #fff; font-size: 1rem; outline: none; transition: border 0.2s; }
         input:focus { border-color: #f5a623; box-shadow: 0 0 0 3px rgba(245,166,35,0.15); }
-        button { width: 100%; background: #f5a623; padding: 15px; border: none; border-radius: 40px; font-weight: 700; font-size: 1rem; margin-top: 16px; cursor: pointer; transition: opacity 0.2s; color: #0f121b; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        .msg-box { padding: 12px 16px; border-radius: 12px; margin-top: 14px; font-size: 0.9rem; display: none; line-height: 1.4; }
-        .msg-box.error { background: #2a1515; color: #f87171; display: block; }
-        .msg-box.success { background: #152a1a; color: #4ade80; display: block; }
-        .msg-box.info { background: #1a263a; color: #93c5fd; display: block; }
-        .back-link { text-align: center; margin-top: 22px; color: #9ca3af; font-size: 0.95rem; }
-        .back-link a { color: #f5a623; text-decoration: none; font-weight: 500; }
-        .back-link a:hover { text-decoration: underline; }
-        @media (max-width: 520px) { .signup-card { padding: 28px 20px; } }
+        .btn { width: 100%; background: #f5a623; padding: 15px; border: none; border-radius: 40px; font-weight: 700; font-size: 1rem; margin-top: 16px; cursor: pointer; color: #0f121b; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .msg { padding: 12px 16px; border-radius: 12px; margin-top: 14px; font-size: 0.9rem; display: none; }
+        .msg.error { background: #2a1515; color: #f87171; display: block; }
+        .msg.success { background: #152a1a; color: #4ade80; display: block; }
+        .msg.info { background: #1a263a; color: #93c5fd; display: block; }
+        .link { text-align: center; margin-top: 22px; color: #9ca3af; font-size: 0.95rem; }
+        .link a { color: #f5a623; text-decoration: none; font-weight: 500; }
+        .hidden { display: none !important; }
+        .otp-icon { font-size: 3rem; text-align: center; margin-bottom: 16px; }
+        .otp-label { color: #f5a623; font-weight: 600; text-align: center; margin-bottom: 6px; word-break: break-all; }
+        .otp-inputs { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+        .otp-inputs input { width: 48px; height: 56px; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 16px; padding: 0; margin: 0; border: 2px solid #2d354c; background: #1a1f2c; color: #fff; }
+        .otp-inputs input:focus { border-color: #f5a623; }
+        .resend { text-align: center; margin-top: 14px; color: #9ca3af; font-size: 0.9rem; }
+        .resend button { background: none; border: none; color: #f5a623; font-weight: 600; cursor: pointer; font-size: 0.9rem; width: auto; padding: 0; margin: 0; text-decoration: underline; }
+        .resend button:disabled { color: #555; text-decoration: none; }
+        @media (max-width: 520px) { .card { padding: 28px 20px; } }
     </style>
 </head>
 <body>
-<div class="signup-card">
-    <div class="logo"><span>⬡ NexVaultTrade</span></div>
-    <h1>Create Account</h1>
-    <p class="sub">Join now and get 10% bonus on first deposit*</p>
-    <div class="bonus-note">🎁 Limited time offer: 10% extra bonus</div>
+<div class="card">
+    <div class="logo"><span>NexVaultTrade</span></div>
 
-    <input type="text" id="signupName" placeholder="Full Name" autocomplete="name">
-    <input type="email" id="signupEmail" placeholder="Email Address" autocomplete="email">
-    <input type="password" id="signupPassword" placeholder="Create Password (min 6 chars)" autocomplete="new-password">
-    <input type="password" id="signupConfirm" placeholder="Confirm Password" autocomplete="new-password">
+    <div id="signupScreen">
+        <h1>Create Account</h1>
+        <p class="sub">Join now and get 10% bonus on first deposit</p>
+        <div class="bonus">Limited time offer: 10% extra bonus</div>
+        <input type="text" id="signupName" placeholder="Full Name" autocomplete="name">
+        <input type="email" id="signupEmail" placeholder="Email Address" autocomplete="email">
+        <input type="password" id="signupPassword" placeholder="Create Password (min 6 chars)">
+        <input type="password" id="signupConfirm" placeholder="Confirm Password">
+        <div class="msg" id="msgBox"></div>
+        <button class="btn" type="button" id="signupBtn">Sign Up and Claim Bonus</button>
+        <div class="link">Already have an account? <a href="nexvaulttrade_login.html">Login</a> | <a href="nexvaulttrade_index.html">Home</a></div>
+    </div>
 
-    <div class="msg-box" id="msgBox"></div>
-    <button type="button" id="signupBtn">Sign Up &amp; Claim Bonus</button>
-
-    <div class="back-link">
-        Already have an account? <a href="nexvaulttrade_login.html">Login</a> &nbsp;|&nbsp;
-        <a href="nexvaulttrade_index.html">Home</a>
+    <div id="otpScreen" class="hidden">
+        <div class="otp-icon">📬</div>
+        <h1 style="text-align:center;font-size:1.5rem;">Verify Your Email</h1>
+        <p class="sub" style="text-align:center;margin-top:8px;">We sent a 6-digit code to</p>
+        <div class="otp-label" id="otpEmailLabel"></div>
+        <div class="otp-inputs">
+            <input type="tel" maxlength="1" class="otp-digit" id="d1">
+            <input type="tel" maxlength="1" class="otp-digit" id="d2">
+            <input type="tel" maxlength="1" class="otp-digit" id="d3">
+            <input type="tel" maxlength="1" class="otp-digit" id="d4">
+            <input type="tel" maxlength="1" class="otp-digit" id="d5">
+            <input type="tel" maxlength="1" class="otp-digit" id="d6">
+        </div>
+        <div class="msg" id="otpMsgBox"></div>
+        <button class="btn" type="button" id="verifyBtn">Verify and Activate Account</button>
+        <div class="resend">Did not get the code? <button id="resendBtn" disabled>Resend</button> <span id="resendTimer">in 60s</span></div>
+        <div class="link" style="margin-top:16px;"><a href="#" id="backToSignup">Back to signup</a></div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const SUPABASE_URL = 'https://vfpxnywxciwxldbhlqhp.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcHhueXd4Y2l3eGxkYmhscWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MzU5MzEsImV4cCI6MjA5ODIxMTkzMX0.mUDHLVKsCL6Jd-ZMvnYWBoyoNf3cKXpbVUuj4qHpHqg';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('Supabase client created (signup)');
+document.addEventListener("DOMContentLoaded", function() {
+    var SB_URL = "https://vfpxnywxciwxldbhlqhp.supabase.co";
+    var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcHhueXd4Y2l3eGxkYmhscWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MzU5MzEsImV4cCI6MjA5ODIxMTkzMX0.mUDHLVKsCL6Jd-ZMvnYWBoyoNf3cKXpbVUuj4qHpHqg";
+    var sb = window.supabase.createClient(SB_URL, SB_KEY);
+    var pendingEmail = "";
+    var resendInterval = null;
 
-        const nameInput = document.getElementById('signupName');
-        const emailInput = document.getElementById('signupEmail');
-        const passInput = document.getElementById('signupPassword');
-        const confirmInput = document.getElementById('signupConfirm');
-        const btn = document.getElementById('signupBtn');
-        const msgBox = document.getElementById('msgBox');
-
-        // redirect if already logged in
-        (async function checkSession() {
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) window.location.href = 'nexvaulttrade_dashboard.html';
-            } catch (e) {
-                console.warn('Session check error:', e);
-            }
-        })();
-
-        function showMessage(text, type = 'error') {
-            msgBox.className = 'msg-box ' + type;
-            msgBox.textContent = text;
-            msgBox.style.display = 'block';
-        }
-        function hideMessage() {
-            msgBox.style.display = 'none';
-            msgBox.className = 'msg-box';
-        }
-
-        async function handleSignup() {
-            console.log('Signup button clicked');
-            hideMessage();
-            const name = nameInput.value.trim();
-            const email = emailInput.value.trim();
-            const password = passInput.value;
-            const confirm = confirmInput.value;
-
-            if (!name || !email || !password || !confirm) return showMessage('Please fill in all fields.', 'error');
-            if (password !== confirm) return showMessage('Passwords do not match.', 'error');
-            if (password.length < 6) return showMessage('Password must be at least 6 characters.', 'error');
-
-            btn.disabled = true;
-            btn.textContent = 'Creating account…';
-
-            try {
-                const { data, error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        data: { full_name: name },
-                        emailRedirectTo: 'https://nexvaulttrade.onrender.com/nexvaulttrade_login.html'
-                    }
-                });
-
-                if (error) {
-                    if (error.message.includes('already registered')) {
-                        return showMessage('This email is already registered. Please login instead.', 'error');
-                    }
-                    return showMessage(error.message, 'error');
-                }
-
-                // Save full_name into profiles table right away
-                if (data && data.user) {
-                    await supabase.from('profiles').upsert({
-                        id: data.user.id,
-                        full_name: name,
-                        email: email
-                    }, { onConflict: 'id' });
-                }
-
-                // Sign out immediately so user must login manually
-                await supabase.auth.signOut();
-
-                showMessage(
-                    '✅ Account created! Please login to continue.',
-                    'success'
-                );
-                btn.disabled = true;
-                btn.textContent = 'Redirecting…';
-                nameInput.value = emailInput.value = passInput.value = confirmInput.value = '';
-
-                setTimeout(() => {
-                    window.location.href = 'nexvaulttrade_login.html';
-                }, 1500);
-
-            } catch (err) {
-                console.error(err);
-                showMessage('Unexpected error. Please try again.', 'error');
-                btn.disabled = false;
-                btn.textContent = 'Sign Up & Claim Bonus';
-            }
-        }
-
-        btn.addEventListener('click', handleSignup);
-        document.addEventListener('keydown', e => { if (e.key === 'Enter') handleSignup(); });
-
-        // check URL param for pending verification reminder
-        (function checkUrlParam() {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('verified') === 'pending') {
-                showMessage('📩 We sent a verification email. Please click the link in that email to activate your account, then log in.', 'info');
-            }
-        })();
+    sb.auth.getSession().then(function(r) {
+        if (r.data.session) window.location.href = "nexvaulttrade_dashboard.html";
     });
+
+    function showMsg(id, text, type) {
+        var b = document.getElementById(id);
+        b.className = "msg " + type;
+        b.textContent = text;
+        b.style.display = "block";
+    }
+    function hideMsg(id) {
+        var b = document.getElementById(id);
+        b.style.display = "none";
+        b.className = "msg";
+    }
+    function showOtp(email) {
+        document.getElementById("signupScreen").classList.add("hidden");
+        document.getElementById("otpScreen").classList.remove("hidden");
+        document.getElementById("otpEmailLabel").textContent = email;
+        document.getElementById("d1").focus();
+        startTimer();
+    }
+    function getOtp() {
+        return Array.from(document.querySelectorAll(".otp-digit")).map(function(d) { return d.value; }).join("");
+    }
+    function clearOtp() {
+        document.querySelectorAll(".otp-digit").forEach(function(d) { d.value = ""; });
+        document.getElementById("d1").focus();
+    }
+    function startTimer() {
+        var btn = document.getElementById("resendBtn");
+        var el = document.getElementById("resendTimer");
+        btn.disabled = true;
+        var s = 60;
+        el.textContent = "in " + s + "s";
+        if (resendInterval) clearInterval(resendInterval);
+        resendInterval = setInterval(function() {
+            s--;
+            if (s <= 0) { clearInterval(resendInterval); btn.disabled = false; el.textContent = ""; }
+            else { el.textContent = "in " + s + "s"; }
+        }, 1000);
+    }
+
+    document.querySelectorAll(".otp-digit").forEach(function(input, i, all) {
+        input.addEventListener("input", function() {
+            this.value = this.value.slice(-1).replace(/[^0-9]/g, "");
+            if (this.value && i < all.length - 1) all[i+1].focus();
+        });
+        input.addEventListener("keydown", function(e) {
+            if (e.key === "Backspace" && !this.value && i > 0) all[i-1].focus();
+        });
+    });
+
+    document.getElementById("signupBtn").addEventListener("click", async function() {
+        hideMsg("msgBox");
+        var name  = document.getElementById("signupName").value.trim();
+        var email = document.getElementById("signupEmail").value.trim();
+        var pass  = document.getElementById("signupPassword").value;
+        var conf  = document.getElementById("signupConfirm").value;
+        if (!name || !email || !pass || !conf) return showMsg("msgBox", "Please fill in all fields.", "error");
+        if (pass !== conf) return showMsg("msgBox", "Passwords do not match.", "error");
+        if (pass.length < 6) return showMsg("msgBox", "Password must be at least 6 characters.", "error");
+        this.disabled = true;
+        this.textContent = "Creating account...";
+        try {
+            var r = await sb.auth.signUp({ email: email, password: pass, options: { data: { full_name: name } } });
+            if (r.error) {
+                this.disabled = false;
+                this.textContent = "Sign Up and Claim Bonus";
+                return showMsg("msgBox", r.error.message.includes("already registered") ? "Email already registered. Please login." : r.error.message, "error");
+            }
+            if (r.data && r.data.user) {
+                await sb.from("profiles").upsert({ id: r.data.user.id, full_name: name, email: email }, { onConflict: "id" });
+            }
+            await sb.auth.signOut();
+            pendingEmail = email;
+            showOtp(email);
+        } catch(e) {
+            this.disabled = false;
+            this.textContent = "Sign Up and Claim Bonus";
+            showMsg("msgBox", "Unexpected error. Please try again.", "error");
+        }
+    });
+
+    document.getElementById("verifyBtn").addEventListener("click", async function() {
+        hideMsg("otpMsgBox");
+        var token = getOtp();
+        if (token.length < 6) return showMsg("otpMsgBox", "Please enter the full 6-digit code.", "error");
+        this.disabled = true;
+        this.textContent = "Verifying...";
+        try {
+            var r = await sb.auth.verifyOtp({ email: pendingEmail, token: token, type: "signup" });
+            if (r.error) {
+                this.disabled = false;
+                this.textContent = "Verify and Activate Account";
+                clearOtp();
+                return showMsg("otpMsgBox", r.error.message, "error");
+            }
+            showMsg("otpMsgBox", "Email verified! Going to dashboard...", "success");
+            setTimeout(function() { window.location.href = "nexvaulttrade_dashboard.html"; }, 1500);
+        } catch(e) {
+            this.disabled = false;
+            this.textContent = "Verify and Activate Account";
+            showMsg("otpMsgBox", "Unexpected error. Please try again.", "error");
+        }
+    });
+
+    document.getElementById("resendBtn").addEventListener("click", async function() {
+        hideMsg("otpMsgBox");
+        this.disabled = true;
+        document.getElementById("resendTimer").textContent = "...";
+        var r = await sb.auth.resend({ type: "signup", email: pendingEmail });
+        if (r.error) { showMsg("otpMsgBox", "Could not resend: " + r.error.message, "error"); }
+        else { showMsg("otpMsgBox", "New code sent to " + pendingEmail, "info"); clearOtp(); }
+        startTimer();
+    });
+
+    document.getElementById("backToSignup").addEventListener("click", function(e) {
+        e.preventDefault();
+        document.getElementById("otpScreen").classList.add("hidden");
+        document.getElementById("signupScreen").classList.remove("hidden");
+        hideMsg("otpMsgBox");
+    });
+});
 </script>
 </body>
 </html>
-  
