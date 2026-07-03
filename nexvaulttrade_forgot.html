@@ -3,60 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forgot Password — NexVaultTrade</title>
+<title>Reset Password — NexVaultTrade</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, Arial, sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .card { background: #111; border: 1px solid #c9a84c44; border-radius: 16px; padding: 35px 25px; max-width: 420px; width: 100%; }
-  .logo { font-size: 22px; font-weight: bold; letter-spacing: 2px; background: linear-gradient(135deg,#c9a84c,#f5d77e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; text-align: center; }
-  h1 { font-size: 20px; margin-bottom: 8px; color: #f5d77e; text-align: center; }
-  p.sub { color: #999; font-size: 14px; margin-bottom: 22px; text-align: center; }
-  input { width: 100%; padding: 14px; background: #1a1a1a; border: 1px solid #c9a84c44; border-radius: 8px; color: #fff; font-size: 15px; margin-bottom: 14px; }
-  input:focus { outline: none; border-color: #c9a84c; }
-  button { width: 100%; padding: 14px; background: linear-gradient(135deg,#c9a84c,#f5d77e); border: none; border-radius: 8px; color: #0a0a0a; font-weight: bold; font-size: 15px; cursor: pointer; }
-  button:disabled { opacity: 0.6; }
+  .card { background: #111; border: 1px solid #c9a84c44; border-radius: 16px; padding: 35px 25px; max-width: 420px; width: 100%; text-align: center; }
+  .logo { font-size: 22px; font-weight: bold; background: linear-gradient(135deg,#c9a84c,#f5d77e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+  h1 { font-size: 20px; margin-bottom: 8px; color: #f5d77e; }
+  p.sub { color: #999; font-size: 14px; margin-bottom: 22px; }
+  input.text-input { width: 100%; padding: 14px; background: #1a1a1a; border: 1px solid #c9a84c44; border-radius: 8px; color: #fff; font-size: 15px; margin-bottom: 14px; text-align: left; }
+  input.text-input:focus { outline: none; border-color: #c9a84c; }
+  .btn { width: 100%; padding: 14px; background: linear-gradient(135deg,#c9a84c,#f5d77e); border: none; border-radius: 8px; color: #0a0a0a; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 4px; }
+  .btn:disabled { opacity: 0.6; }
   .back { text-align: center; margin-top: 18px; font-size: 13px; }
   .back a { color: #c9a84c; text-decoration: none; }
-  .msg { margin-top: 16px; font-size: 13px; padding: 10px; border-radius: 8px; display: none; }
+  .msg { margin-top: 16px; font-size: 13px; padding: 10px; border-radius: 8px; display: none; text-align: left; }
   .msg.error { background: #3a1414; color: #ff8a8a; display: block; }
   .msg.success { background: #14301a; color: #8aff9e; display: block; }
   .msg.info { background: #1a2433; color: #8ac6ff; display: block; }
+  .hidden { display: none !important; }
+  .otp-inputs { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+  .otp-inputs input { width: 46px; height: 54px; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 10px; padding: 0; border: 2px solid #c9a84c44; background: #1a1a1a; color: #fff; }
+  .otp-inputs input:focus { border-color: #c9a84c; outline: none; }
+  .resend { margin-top: 14px; font-size: 13px; color: #888; }
+  .resend button { background: none; border: none; color: #c9a84c; font-weight: 600; cursor: pointer; font-size: 13px; text-decoration: underline; }
+  .resend button:disabled { color: #555; text-decoration: none; }
 </style>
 </head>
 <body>
 <div class="card">
   <div class="logo">NEXVAULTTRADE</div>
-  <h1>Forgot Password?</h1>
-  <p class="sub">Enter your email and we will send you a reset code.</p>
-  <input type="email" id="emailInput" placeholder="Email address" autocomplete="email">
-  <button id="sendBtn">Send Reset Code</button>
-  <div class="back"><a href="nexvaulttrade_login.html">Back to Login</a></div>
-  <div class="msg" id="msgBox"></div>
+
+  <!-- STEP 1: EMAIL -->
+  <div id="emailStep">
+    <h1>Forgot Password?</h1>
+    <p class="sub">Enter your email and we will send you a reset code.</p>
+    <input type="email" class="text-input" id="emailInput" placeholder="Email address" autocomplete="email">
+    <button class="btn" id="sendBtn">Send Reset Code</button>
+    <div class="back"><a href="nexvaulttrade_login.html">Back to Login</a></div>
+    <div class="msg" id="emailMsg"></div>
+  </div>
+
+  <!-- STEP 2: OTP -->
+  <div id="otpStep" class="hidden">
+    <h1>Enter Reset Code</h1>
+    <p class="sub" id="otpSub">Enter the 6-digit code sent to your email.</p>
+    <div class="otp-inputs">
+      <input type="tel" maxlength="1" class="r-digit">
+      <input type="tel" maxlength="1" class="r-digit">
+      <input type="tel" maxlength="1" class="r-digit">
+      <input type="tel" maxlength="1" class="r-digit">
+      <input type="tel" maxlength="1" class="r-digit">
+      <input type="tel" maxlength="1" class="r-digit">
+    </div>
+    <div class="msg" id="otpMsg"></div>
+    <button class="btn" id="otpBtn">Verify Code</button>
+    <div class="resend">Didn't get it? <button id="resendBtn" disabled>Resend</button> <span id="resendTimer">in 60s</span></div>
+    <div class="back"><a href="#" id="backToEmail">Back</a></div>
+  </div>
+
+  <!-- STEP 3: NEW PASSWORD -->
+  <div id="passwordStep" class="hidden">
+    <h1>Set New Password</h1>
+    <p class="sub">Choose a strong new password.</p>
+    <input type="password" class="text-input" id="newPass" placeholder="New password">
+    <input type="password" class="text-input" id="confirmPass" placeholder="Confirm new password">
+    <div class="msg" id="passMsg"></div>
+    <button class="btn" id="updateBtn">Update Password</button>
+  </div>
 </div>
+
 <script>
-  const SUPABASE_URL = 'https://vfpxnywxciwxldbhlqhp.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcHhueXd4Y2l3eGxkYmhscWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MzU5MzEsImV4cCI6MjA5ODIxMTkzMX0.mUDHLVKsCL6Jd-ZMvnYWBoyoNf3cKXpbVUuj4qHpHqg';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  document.addEventListener('DOMContentLoaded', function() {
-    const emailInput = document.getElementById('emailInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const msgBox = document.getElementById('msgBox');
-    function showMessage(text, type) { msgBox.textContent = text; msgBox.className = 'msg ' + type; }
-    async function handleSend() {
-      const email = emailInput.value.trim();
-      if (!email) return showMessage('Please enter your email.', 'error');
-      sendBtn.disabled = true; sendBtn.textContent = 'Sending...';
-      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: undefined });
-      sendBtn.disabled = false; sendBtn.textContent = 'Send Reset Code';
-      if (error) { showMessage(error.message, 'error'); return; }
-      localStorage.setItem('pending_reset_email', email);
-      showMessage('Reset code sent! Redirecting...', 'success');
-      setTimeout(() => { window.location.href = 'nexvaulttrade_reset_verify.html?email=' + encodeURIComponent(email); }, 1200);
-    }
-    sendBtn.addEventListener('click', handleSend);
-    document.addEventListener('keydown', e => { if (e.key === 'Enter') handleSend(); });
+const SB = window.supabase.createClient('https://vfpxnywxciwxldbhlqhp.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcHhueXd4Y2l3eGxkYmhscWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MzU5MzEsImV4cCI6MjA5ODIxMTkzMX0.mUDHLVKsCL6Jd-ZMvnYWBoyoNf3cKXpbVUuj4qHpHqg');
+
+let pendingEmail = '';
+let timerInterval = null;
+
+function show(id) { document.getElementById(id).classList.remove('hidden'); }
+function hide(id) { document.getElementById(id).classList.add('hidden'); }
+function msg(id, text, type) { const b = document.getElementById(id); b.textContent = text; b.className = 'msg ' + type; }
+
+// OTP digit inputs
+const digits = document.querySelectorAll('.r-digit');
+digits.forEach(function(input, i) {
+  input.addEventListener('input', function() {
+    this.value = this.value.slice(-1).replace(/[^0-9]/g,'');
+    if (this.value && i < digits.length-1) digits[i+1].focus();
   });
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && !this.value && i > 0) digits[i-1].focus();
+  });
+  input.addEventListener('paste', function(e) {
+    e.preventDefault();
+    const text = (e.clipboardData||window.clipboardData).getData('text').replace(/[^0-9]/g,'');
+    text.split('').forEach(function(c,j) { if (digits[j]) digits[j].value = c; });
+    if (digits[Math.min(text.length,5)]) digits[Math.min(text.length,5)].focus();
+  });
+});
+function getOtp() { return Array.from(digits).map(function(d){return d.value;}).join(''); }
+function clearOtp() { digits.forEach(function(d){d.value='';}); digits[0].focus(); }
+
+function startTimer() {
+  const btn = document.getElementById('resendBtn');
+  const el = document.getElementById('resendTimer');
+  btn.disabled = true; let s = 60; el.textContent = 'in '+s+'s';
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(function() {
+    s--;
+    if (s<=0) { clearInterval(timerInterval); btn.disabled=false; el.textContent=''; }
+    else { el.textContent='in '+s+'s'; }
+  }, 1000);
+}
+
+// STEP 1: Send reset code
+document.getElementById('sendBtn').addEventListener('click', async function() {
+  const email = document.getElementById('emailInput').value.trim();
+  if (!email) return msg('emailMsg','Please enter your email.','error');
+  this.disabled = true; this.textContent = 'Sending...';
+  const { error } = await SB.auth.resetPasswordForEmail(email);
+  this.disabled = false; this.textContent = 'Send Reset Code';
+  if (error) return msg('emailMsg', error.message, 'error');
+  pendingEmail = email;
+  document.getElementById('otpSub').textContent = 'Enter the 6-digit code sent to '+email;
+  hide('emailStep'); show('otpStep');
+  startTimer();
+  digits[0].focus();
+  msg('otpMsg','Code sent to '+email,'info');
+});
+
+// STEP 2: Verify OTP
+document.getElementById('otpBtn').addEventListener('click', async function() {
+  const token = getOtp();
+  if (token.length < 6) return msg('otpMsg','Please enter all 6 digits.','error');
+  this.disabled = true; this.textContent = 'Verifying...';
+  const { error } = await SB.auth.verifyOtp({ email: pendingEmail, token: token, type: 'recovery' });
+  this.disabled = false; this.textContent = 'Verify Code';
+  if (error) { clearOtp(); return msg('otpMsg', error.message, 'error'); }
+  hide('otpStep'); show('passwordStep');
+});
+
+// Resend
+document.getElementById('resendBtn').addEventListener('click', async function() {
+  this.disabled = true; document.getElementById('resendTimer').textContent = '...';
+  const { error } = await SB.auth.resetPasswordForEmail(pendingEmail);
+  if (error) { msg('otpMsg', error.message, 'error'); }
+  else { clearOtp(); msg('otpMsg','New code sent!','info'); }
+  startTimer();
+});
+
+// Back to email
+document.getElementById('backToEmail').addEventListener('click', function(e) {
+  e.preventDefault();
+  hide('otpStep'); show('emailStep');
+});
+
+// STEP 3: Update password
+document.getElementById('updateBtn').addEventListener('click', async function() {
+  const pass = document.getElementById('newPass').value;
+  const conf = document.getElementById('confirmPass').value;
+  if (!pass || !conf) return msg('passMsg','Please fill in both fields.','error');
+  if (pass.length < 6) return msg('passMsg','Password must be at least 6 characters.','error');
+  if (pass !== conf) return msg('passMsg','Passwords do not match.','error');
+  this.disabled = true; this.textContent = 'Updating...';
+  const { error } = await SB.auth.updateUser({ password: pass });
+  this.disabled = false; this.textContent = 'Update Password';
+  if (error) return msg('passMsg', error.message, 'error');
+  msg('passMsg','Password updated! Redirecting to login...','success');
+  setTimeout(function() { window.location.href = 'nexvaulttrade_login.html'; }, 1500);
+});
 </script>
 </body>
 </html>
