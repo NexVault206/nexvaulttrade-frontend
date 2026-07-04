@@ -6,6 +6,7 @@
     <title>Investment Plans | NexVaultTrade</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ---------- ROOT VARIABLES (Dark default) ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -14,29 +15,95 @@
         }
 
         body {
-            background: #0B0F16;
+            background: var(--bg-body);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 24px 24px 100px;
+            transition: background 0.3s, color 0.2s;
         }
 
+        :root {
+            --bg-body: #0B0F16;
+            --bg-container: #121924;
+            --bg-card: #0E1520;
+            --bg-card-alt: #0D151F;
+            --bg-input: #0A111C;
+            --bg-chip: #0E1620;
+            --border-color: #1E2C3A;
+            --border-light: #253440;
+            --border-input: #2A4056;
+            --text-primary: #F1F5F9;
+            --text-secondary: #C4D9F0;
+            --text-muted: #8AA9CC;
+            --text-chip: #FFE3A3;
+            --accent: #D4AF37;
+            --accent-gold: #FFD966;
+            --btn-primary-bg: linear-gradient(95deg, #1F6E43, #0F4C2D);
+            --shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+            --plan-tag-bg: #1A2A38;
+            --plan-tag-color: #BDD9FF;
+            --modal-bg: #131A24;
+            --modal-border: #2D4054;
+            --modal-text: #CBDDE8;
+            --cancel-btn-bg: #1F2A36;
+            --cancel-btn-color: #B9D4F0;
+            --nav-bg: #0F1720;
+            --nav-border: #232F3C;
+            --nav-color: #6E8EB0;
+            --nav-active: #3E9FEF;
+            --toast-bg: #1F2A33;
+        }
+
+        body.light {
+            --bg-body: #F3F6FA;
+            --bg-container: #FFFFFF;
+            --bg-card: #F0F4F9;
+            --bg-card-alt: #E8EDF3;
+            --bg-input: #FFFFFF;
+            --bg-chip: #E8ECF1;
+            --border-color: #D1D9E6;
+            --border-light: #CBD5E1;
+            --border-input: #B0C4DE;
+            --text-primary: #1A1D2E;
+            --text-secondary: #4A5A72;
+            --text-muted: #6A7F9A;
+            --text-chip: #A67C1E;
+            --accent: #C99A2B;
+            --accent-gold: #A67C1E;
+            --btn-primary-bg: linear-gradient(95deg, #10B981, #059669);
+            --shadow: 0 10px 30px rgba(0,0,0,0.06);
+            --plan-tag-bg: #E8ECF1;
+            --plan-tag-color: #3A5A7A;
+            --modal-bg: #FFFFFF;
+            --modal-border: #D1D9E6;
+            --modal-text: #1A1D2E;
+            --cancel-btn-bg: #E8ECF1;
+            --cancel-btn-color: #4A5A72;
+            --nav-bg: #FFFFFF;
+            --nav-border: #D1D9E6;
+            --nav-color: #6A7F9A;
+            --nav-active: #2563EB;
+            --toast-bg: #FFFFFF;
+        }
+
+        /* ---------- MAIN CONTAINER ---------- */
         .plan-container {
             max-width: 1100px;
             width: 100%;
-            background: #121924;
+            background: var(--bg-container);
             border-radius: 40px;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+            box-shadow: var(--shadow);
             overflow: hidden;
-            transition: all 0.2s;
+            transition: background 0.3s, box-shadow 0.3s;
         }
 
         .plan-screen {
             padding: 28px 30px 34px;
         }
 
-        /* header */
+        /* ---------- HEADER ---------- */
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -45,30 +112,75 @@
             flex-wrap: wrap;
             gap: 12px;
         }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
         .page-title {
             font-size: 1.7rem;
             font-weight: 700;
-            color: #F1F5F9;
+            color: var(--text-primary);
             letter-spacing: -0.3px;
         }
         .page-title span {
-            color: #FFD966;
+            color: var(--accent-gold);
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 40px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-primary);
+            transition: 0.2s;
+        }
+        .theme-toggle:hover {
+            opacity: 0.8;
         }
         .balance-chip {
-            background: #0E1620;
-            border: 1px solid #2A3F54;
+            background: var(--bg-chip);
+            border: 1px solid var(--border-color);
             border-radius: 60px;
             padding: 8px 20px;
             font-size: 0.85rem;
-            color: #FFE3A3;
+            color: var(--text-chip);
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .balance-chip i {
-            margin-right: 8px;
-            color: #6FCF97;
+            color: var(--success);
         }
 
-        /* plan grid */
+        .back-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+            margin-bottom: 10px;
+        }
+        .back-btn:hover {
+            background: var(--bg-card-alt);
+            color: var(--text-primary);
+        }
+
+        /* ---------- PLAN GRID ---------- */
         .plan-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -77,22 +189,22 @@
         }
 
         .plan-card {
-            background: #0E1520;
+            background: var(--bg-card);
             border-radius: 28px;
             padding: 24px 22px 28px;
-            border: 2px solid #1E2C3A;
+            border: 2px solid var(--border-color);
             transition: all 0.25s ease;
             cursor: pointer;
             position: relative;
         }
         .plan-card:hover {
             transform: translateY(-4px);
-            border-color: #3A5C7A;
+            border-color: var(--text-muted);
         }
         .plan-card.selected {
-            border-color: #6FCF97;
+            border-color: var(--success);
             box-shadow: 0 0 0 3px rgba(111, 207, 151, 0.25);
-            background: #111E2A;
+            background: var(--bg-card-alt);
         }
         .plan-card.selected .plan-select-badge {
             opacity: 1;
@@ -113,7 +225,6 @@
             opacity: 0;
             transition: 0.2s;
         }
-
         .plan-icon {
             font-size: 2rem;
             margin-bottom: 12px;
@@ -121,40 +232,40 @@
         .plan-name {
             font-size: 1.25rem;
             font-weight: 700;
-            color: white;
+            color: var(--text-primary);
             margin-bottom: 4px;
         }
         .plan-range {
             font-size: 0.85rem;
-            color: #C4D9F0;
+            color: var(--text-secondary);
             font-weight: 500;
             margin-bottom: 6px;
         }
         .plan-duration {
             font-size: 0.8rem;
-            color: #8AA9CC;
+            color: var(--text-muted);
             margin-bottom: 14px;
         }
         .plan-duration i {
             margin-right: 6px;
-            color: #FFD966;
+            color: var(--accent-gold);
         }
         .plan-tag {
             display: inline-block;
-            background: #1A2A38;
+            background: var(--plan-tag-bg);
             border-radius: 60px;
             padding: 4px 14px;
             font-size: 0.65rem;
             font-weight: 500;
-            color: #BDD9FF;
+            color: var(--plan-tag-color);
             letter-spacing: 0.3px;
         }
 
-        /* selected plan detail area */
+        /* ---------- SELECTED PLAN AREA ---------- */
         .selected-plan-area {
-            background: #0D151F;
+            background: var(--bg-card-alt);
             border-radius: 32px;
-            border: 1px solid #253440;
+            border: 1px solid var(--border-light);
             padding: 24px 28px;
             display: none;
             margin-top: 8px;
@@ -179,7 +290,7 @@
             font-size: 2.2rem;
         }
         .selected-plan-details {
-            color: white;
+            color: var(--text-primary);
         }
         .selected-plan-details .name {
             font-size: 1.1rem;
@@ -187,7 +298,7 @@
         }
         .selected-plan-details .meta {
             font-size: 0.75rem;
-            color: #9AB7D8;
+            color: var(--text-muted);
             margin-top: 2px;
         }
 
@@ -199,17 +310,17 @@
         }
         .deposit-input-group label {
             font-size: 0.85rem;
-            color: #B9D4F0;
+            color: var(--text-secondary);
             font-weight: 500;
         }
         .deposit-input {
-            background: #0A111C;
-            border: 1px solid #2A4056;
+            background: var(--bg-input);
+            border: 1px solid var(--border-input);
             border-radius: 60px;
             padding: 12px 20px;
             width: 200px;
             font-size: 1rem;
-            color: white;
+            color: var(--text-primary);
             outline: none;
             font-weight: 500;
         }
@@ -217,15 +328,15 @@
             border-color: #5B8BB4;
         }
         .deposit-input::placeholder {
-            color: #4F6F8F;
+            color: var(--text-muted);
         }
         .range-hint {
             font-size: 0.7rem;
-            color: #6C8EB0;
+            color: var(--text-muted);
         }
 
         .btn-deposit {
-            background: linear-gradient(95deg, #1F6E43, #0F4C2D);
+            background: var(--btn-primary-bg);
             border: none;
             padding: 12px 34px;
             border-radius: 60px;
@@ -243,7 +354,144 @@
             cursor: not-allowed;
         }
 
-        /* responsive */
+        /* ---------- MODAL ---------- */
+        .deposit-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        .deposit-modal-overlay.active {
+            display: flex;
+        }
+        .deposit-modal {
+            background: var(--modal-bg);
+            border-radius: 40px;
+            max-width: 480px;
+            width: 100%;
+            padding: 32px 30px 30px;
+            border: 1px solid var(--modal-border);
+        }
+        .deposit-modal h3 {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+        .deposit-modal .sub {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+        .deposit-modal .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--modal-text);
+            font-size: 0.9rem;
+        }
+        .deposit-modal .detail-row:last-child {
+            border-bottom: none;
+        }
+        .deposit-modal .detail-row .label {
+            color: var(--text-muted);
+        }
+        .deposit-modal .detail-row .value {
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+        .modal-actions {
+            display: flex;
+            gap: 14px;
+            margin-top: 24px;
+        }
+        .modal-actions button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 60px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .modal-actions .cancel-btn {
+            background: var(--cancel-btn-bg);
+            color: var(--cancel-btn-color);
+        }
+        .modal-actions .confirm-btn {
+            background: var(--btn-primary-bg);
+            color: white;
+        }
+        .modal-actions button:active {
+            transform: scale(0.97);
+        }
+
+        /* ---------- TOAST ---------- */
+        .toast-msg {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--toast-bg);
+            backdrop-filter: blur(12px);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            z-index: 1000;
+            transition: 0.2s;
+            font-weight: 500;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            pointer-events: none;
+            border: 1px solid var(--border-color);
+        }
+
+        /* ---------- BOTTOM NAV ---------- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 1100px;
+            background: var(--nav-bg);
+            padding: 12px 28px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--nav-border);
+            border-radius: 24px 24px 0 0;
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: var(--nav-color);
+            font-size: 0.7rem;
+            font-weight: 500;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .nav-item i {
+            font-size: 1.4rem;
+        }
+        .nav-item.active {
+            color: var(--nav-active);
+        }
+        .nav-item span {
+            font-size: 0.7rem;
+        }
+        .nav-item:hover {
+            color: var(--text-secondary);
+        }
+   /* ---------- RESPONSIVE ---------- */
         @media (max-width: 600px) {
             .plan-grid {
                 grid-template-columns: 1fr 1fr;
@@ -282,149 +530,8 @@
                 width: 100%;
             }
         }
-
-        /* bottom nav (matching profile) */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 1100px;
-            background: #0F1720;
-            padding: 12px 28px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #232F3C;
-            border-radius: 24px 24px 0 0;
-            z-index: 100;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            color: #6E8EB0;
-            font-size: 0.7rem;
-            font-weight: 500;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-        .nav-item i {
-            font-size: 1.4rem;
-        }
-        .nav-item.active {
-            color: #3E9FEF;
-        }
-        .nav-item span {
-            font-size: 0.7rem;
-        }
-        .nav-item:hover {
-            color: #9DC6FF;
-        }
-
-        .toast-msg {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1F2A33;
-            backdrop-filter: blur(12px);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 60px;
-            font-size: 0.8rem;
-            z-index: 1000;
-            transition: 0.2s;
-            font-weight: 500;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            pointer-events: none;
-        }
-
-        .deposit-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(6px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-        .deposit-modal-overlay.active {
-            display: flex;
-        }
-        .deposit-modal {
-            background: #131A24;
-            border-radius: 40px;
-            max-width: 480px;
-            width: 100%;
-            padding: 32px 30px 30px;
-            border: 1px solid #2D4054;
-        }
-        .deposit-modal h3 {
-            color: white;
-            font-size: 1.3rem;
-            margin-bottom: 8px;
-        }
-        .deposit-modal .sub {
-            color: #8AA9CC;
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-        }
-        .deposit-modal .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #1F2C3A;
-            color: #CBDDE8;
-            font-size: 0.9rem;
-        }
-        .deposit-modal .detail-row:last-child {
-            border-bottom: none;
-        }
-        .deposit-modal .detail-row .label {
-            color: #8AA9CC;
-        }
-        .deposit-modal .detail-row .value {
-            font-weight: 600;
-            color: #FFE3A3;
-        }
-        .modal-actions {
-            display: flex;
-            gap: 14px;
-            margin-top: 24px;
-        }
-        .modal-actions button {
-            flex: 1;
-            padding: 14px;
-            border-radius: 60px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .modal-actions .cancel-btn {
-            background: #1F2A36;
-            color: #B9D4F0;
-        }
-        .modal-actions .confirm-btn {
-            background: linear-gradient(95deg, #1F6E43, #0F4C2D);
-            color: white;
-        }
-        .modal-actions button:active {
-            transform: scale(0.97);
-        }
-
-        /* badge colors per plan */
-        .plan-card[data-plan="starter"] .plan-tag { background: #2A3E4C; color: #B0D0E8; }
-        .plan-card[data-plan="bronze"] .plan-tag { background: #4A3A2A; color: #F0C8A0; }
-        .plan-card[data-plan="silver"] .plan-tag { background: #3A404A; color: #D0D8E8; }
-        .plan-card[data-plan="gold"] .plan-tag { background: #4A3A20; color: #FFD98C; }
-        .plan-card[data-plan="platinum"] .plan-tag { background: #2A3850; color: #A8D4FF; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -432,14 +539,20 @@
     <div class="plan-screen">
         <!-- Header -->
         <div class="page-header">
-            <button class="back-btn" onclick="window.location.href='nexvaulttrade_dashboard.html'" style="background:#1A2530;border:none;color:#fff;padding:8px 16px;border-radius:40px;cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:10px;">
-                <i class="fas fa-arrow-left"></i> Dashboard
-            </button>
-            <div class="page-title">📈 Invest <span>Plans</span></div>
-            <div class="balance-chip" id="balanceChip">
-                <i class="fas fa-wallet"></i> <span id="userBalanceDisplay">$0.00</span>
+            <div class="header-left">
+                <button class="back-btn" onclick="window.location.href='nexvaulttrade_dashboard.html'">
+                    <i class="fas fa-arrow-left"></i> Dashboard
+                </button>
+                <div class="page-title">📈 Invest <span>Plans</span></div>
+            </div>
+            <div class="header-right">
+                <div class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></div>
+                <div class="balance-chip" id="balanceChip">
+                    <i class="fas fa-wallet"></i> <span id="userBalanceDisplay">$0.00</span>
+                </div>
             </div>
         </div>
+
         <!-- Plan Grid -->
         <div class="plan-grid" id="planGrid"></div>
 
@@ -480,6 +593,7 @@
     </div>
 </div>
 
+<!-- Bottom Navigation -->
 <nav class="bottom-nav">
     <a href="nexvaulttrade_dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
     <a href="nexvaulttrade_deposit.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposit</span></a>
@@ -491,12 +605,17 @@
 </nav>
 
 <script>
+    // ---------- SUPABASE ----------
+    const SUPABASE_URL = 'https://vfpxnywxciwxldbhlqhp.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcHhueXd4Y2l3eGxkYmhscWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MzU5MzEsImV4cCI6MjA5ODIxMTkzMX0.mUDHLVKsCL6Jd-ZMvnYWBoyoNf3cKXpbVUuj4qHpHqg';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     // ---------- PLAN DATA ----------
     const plans = [
         {
             id: 'starter',
             name: 'Starter plan',
-            icon: '?',
+            icon: '🌱',
             minDeposit: 50,
             maxDeposit: 499,
             duration: 7,
@@ -506,7 +625,7 @@
         {
             id: 'bronze',
             name: 'Bronze Plan',
-            icon: '?',
+            icon: '🥉',
             minDeposit: 500,
             maxDeposit: 1999,
             duration: 14,
@@ -516,7 +635,7 @@
         {
             id: 'silver',
             name: 'Silver Plan',
-            icon: '',
+            icon: '🥈',
             minDeposit: 2000,
             maxDeposit: 4999,
             duration: 21,
@@ -526,7 +645,7 @@
         {
             id: 'gold',
             name: 'Gold Plan',
-            icon: '?',
+            icon: '🥇',
             minDeposit: 5000,
             maxDeposit: 9999,
             duration: 30,
@@ -536,7 +655,7 @@
         {
             id: 'platinum',
             name: 'Platinum Plan',
-            icon: '?',
+            icon: '💎',
             minDeposit: 10000,
             maxDeposit: Infinity,
             duration: 45,
@@ -544,30 +663,37 @@
             color: '#A8D4FF'
         }
     ];
-   // ---------- STATE ----------
+
+    // ---------- STATE ----------
     let selectedPlanId = null;
     let userBalance = 0;
     let depositAmount = '';
 
-    // Load user balance from localStorage (simulate)
-    function loadUserBalance() {
-        const stored = localStorage.getItem('nexvault_balance');
-        if (stored !== null && !isNaN(parseFloat(stored))) {
-            userBalance = parseFloat(stored);
-        } else {
-            // fallback: try from users array if admin panel was used
-            const users = JSON.parse(localStorage.getItem('nexvault_users') || '[]');
-            const currentUser = users.find(u => u.id === 1);
-            if (currentUser) {
-                userBalance = currentUser.balance || 0;
+    // ---------- FETCH USER BALANCE ----------
+    async function fetchUserBalance() {
+        try {
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) {
+                // Not logged in – redirect to login
+                window.location.href = 'nexvaulttrade_login.html';
+                return;
             }
+            const { data: profile, error } = await sb.from('profiles')
+                .select('balance')
+                .eq('id', session.user.id)
+                .single();
+            if (error) throw error;
+            userBalance = profile.balance || 0;
+            document.getElementById('userBalanceDisplay').textContent = '$' + userBalance.toFixed(2);
+        } catch(e) {
+            console.warn('Could not fetch balance:', e);
+            // fallback to localStorage
+            const stored = localStorage.getItem('nexvault_balance');
+            if (stored !== null && !isNaN(parseFloat(stored))) {
+                userBalance = parseFloat(stored);
+            }
+            document.getElementById('userBalanceDisplay').textContent = '$' + userBalance.toFixed(2);
         }
-        // also check if we have a current user balance from the withdrawal page
-        const bal = localStorage.getItem('user_balance_usd');
-        if (bal !== null && !isNaN(parseFloat(bal))) {
-            userBalance = parseFloat(bal);
-        }
-        document.getElementById('userBalanceDisplay').textContent = '$' + userBalance.toFixed(2);
     }
 
     // ---------- RENDER PLANS ----------
@@ -613,7 +739,7 @@
         document.getElementById('selectedMeta').textContent = `${plan.duration} Days · ${plan.tag}`;
 
         const maxDisplay = plan.maxDeposit === Infinity ? '∞' : plan.maxDeposit.toLocaleString();
-        document.getElementById('rangeHint').textContent = `Min $${plan.minDeposit} – $${maxDisplay}`;
+        document.getElementById('rangeHint').textContent = `Min $${plan.minDeposit} – ${maxDisplay}`;
 
         // set input placeholder & min
         const input = document.getElementById('depositAmount');
@@ -650,7 +776,7 @@
             btn.textContent = 'Deposit';
         }
     }
-  
+
     // ---------- SHOW TOAST ----------
     function showToast(msg, isError = false) {
         const existing = document.querySelector('.toast-msg');
@@ -695,7 +821,7 @@
         document.getElementById('depositModal').classList.remove('active');
     }
 
-    function confirmDeposit() {
+    async function confirmDeposit() {
         const plan = plans.find(p => p.id === selectedPlanId);
         if (!plan) return;
         const amount = parseFloat(document.getElementById('depositAmount').value);
@@ -705,19 +831,33 @@
             return;
         }
 
-        // Deduct balance
-        userBalance -= amount;
-        localStorage.setItem('nexvault_balance', userBalance);
-        // update user in users array if exists
-        const users = JSON.parse(localStorage.getItem('nexvault_users') || '[]');
-        const currentUser = users.find(u => u.id === 1);
-        if (currentUser) {
-            currentUser.balance = userBalance;
-            localStorage.setItem('nexvault_users', JSON.stringify(users));
-        }
-        localStorage.setItem('user_balance_usd', userBalance);
+        // Deduct balance in Supabase
+        try {
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) { showToast('Please log in again.', true); return; }
+            const newBalance = userBalance - amount;
+            const { error } = await sb.from('profiles')
+                .update({ balance: newBalance })
+                .eq('id', session.user.id);
+            if (error) throw error;
+            userBalance = newBalance;
+            document.getElementById('userBalanceDisplay').textContent = '$' + userBalance.toFixed(2);
 
-        document.getElementById('userBalanceDisplay').textContent = '$' + userBalance.toFixed(2);
+            // Also record transaction (optional)
+            await sb.from('transactions').insert({
+                user_id: session.user.id,
+                type: 'investment',
+                amount: amount,
+                method: plan.name,
+                status: 'completed',
+                created_at: new Date().toISOString()
+            });
+        } catch(e) {
+            showToast('Error processing deposit: ' + e.message, true);
+            closeDepositModal();
+            return;
+        }
+
         closeDepositModal();
         showToast(`✅ Deposit of $${amount.toFixed(2)} into ${plan.name} successful!`);
 
@@ -729,10 +869,35 @@
         updateDepositButton();
     }
 
-    // ---------- EVENT BINDING ----------
+    // ---------- THEME TOGGLE ----------
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        document.body.classList.toggle('light');
+        const icon = document.querySelector('#themeToggle i');
+        icon.classList.toggle('fa-moon');
+        icon.classList.toggle('fa-sun');
+        // Save theme preference
+        localStorage.setItem('nexvault_theme', document.body.classList.contains('light') ? 'light' : 'dark');
+    });
+
+    // ---------- RESTORE THEME ----------
+    function restoreTheme() {
+        const saved = localStorage.getItem('nexvault_theme');
+        if (saved === 'light') {
+            document.body.classList.add('light');
+            const icon = document.querySelector('#themeToggle i');
+            if (icon) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        }
+    }
+
+    // ---------- INIT ----------
     document.addEventListener('DOMContentLoaded', () => {
-        loadUserBalance();
-        renderPlans();
+        restoreTheme();
+        fetchUserBalance().then(() => {
+            renderPlans();
+        });
 
         // deposit input listener
         document.getElementById('depositAmount').addEventListener('input', updateDepositButton);
@@ -746,18 +911,11 @@
         document.getElementById('depositModal').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) closeDepositModal();
         });
-
-        // bottom nav is now real <a> links, no JS needed
-
-        // pre-select first plan?
-        // selectPlan('starter');
     });
 
-    // also expose for inline
+    // Expose for inline use (if needed)
     window.selectPlan = selectPlan;
 </script>
-
 </body>
 </html>
-        
   
