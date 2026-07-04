@@ -9,6 +9,7 @@
     <!-- Font Awesome Icons (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* ---------- ROOT VARIABLES (Dark default) ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -17,42 +18,103 @@
         }
 
         body {
-            background: #0B0E15;
+            background: var(--bg-body);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px 20px 100px;
+            transition: background 0.3s, color 0.2s;
         }
 
-        /* Main app container – card style */
+        :root {
+            --bg-body: #0B0E15;
+            --bg-container: #131A24;
+            --bg-card: #0F171F;
+            --bg-card-alt: #121C26;
+            --bg-input: #081018;
+            --bg-item: #1C2630;
+            --bg-item-hover: #25323e;
+            --border-color: #25313e;
+            --border-light: #2A3844;
+            --text-primary: #F1F5F9;
+            --text-secondary: #8EA3BB;
+            --text-muted: #6C89A6;
+            --accent: #D4AF37;
+            --accent-gold: #FFD966;
+            --btn-primary-bg: linear-gradient(105deg, #2B6E9E 0%, #1E4A6E 100%);
+            --btn-payment-bg: linear-gradient(95deg, #1F6E43, #0F4C2D);
+            --shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+            --qr-bg: #ffffff;
+            --copy-bg: #1E2F3C;
+            --copy-hover: #2F4455;
+            --share-bg: #1D2A35;
+            --share-border: #344B60;
+            --note-color: #6C89A6;
+        }
+
+        body.light {
+            --bg-body: #F3F6FA;
+            --bg-container: #FFFFFF;
+            --bg-card: #F0F4F9;
+            --bg-card-alt: #E8EDF3;
+            --bg-input: #FFFFFF;
+            --bg-item: #E8ECF1;
+            --bg-item-hover: #DCE1E8;
+            --border-color: #D1D9E6;
+            --border-light: #CBD5E1;
+            --text-primary: #1A1D2E;
+            --text-secondary: #4A5A72;
+            --text-muted: #6A7F9A;
+            --accent: #C99A2B;
+            --accent-gold: #A67C1E;
+            --btn-primary-bg: linear-gradient(105deg, #3B82F6, #2563EB);
+            --btn-payment-bg: linear-gradient(95deg, #10B981, #059669);
+            --shadow: 0 10px 30px rgba(0,0,0,0.06);
+            --qr-bg: #ffffff;
+            --copy-bg: #E8ECF1;
+            --copy-hover: #D1D9E6;
+            --share-bg: #E8ECF1;
+            --share-border: #CBD5E1;
+            --note-color: #6A7F9A;
+        }
+
+        /* ---------- MAIN CONTAINER ---------- */
         .app-container {
             max-width: 500px;
             width: 100%;
-            background: #131A24;
+            background: var(--bg-container);
             border-radius: 32px;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6);
+            box-shadow: var(--shadow);
             overflow: hidden;
-            backdrop-filter: blur(0px);
-            transition: all 0.2s;
+            transition: background 0.3s, box-shadow 0.3s;
         }
 
-        /* inner padding */
         .screen {
             padding: 24px 22px 32px;
         }
 
-        /* headers */
+        /* ---------- HEADER ---------- */
         .screen-header {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
             margin-bottom: 28px;
         }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
         .back-btn {
-            background: #1E2A36;
+            background: var(--bg-item);
             border: none;
-            color: #9BB6D0;
+            color: var(--text-secondary);
             width: 38px;
             height: 38px;
             border-radius: 40px;
@@ -64,19 +126,32 @@
             justify-content: center;
         }
         .back-btn:hover {
-            background: #2A3A48;
-            color: white;
+            background: var(--bg-item-hover);
+            color: var(--text-primary);
         }
         .screen-title {
             font-size: 1.75rem;
             font-weight: 600;
             letter-spacing: -0.3px;
-            color: #F1F5F9;
+            color: var(--text-primary);
+        }
+        .theme-toggle {
+            background: var(--bg-item);
+            border: 1px solid var(--border-color);
+            border-radius: 40px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-primary);
+            transition: 0.2s;
+        }
+        .theme-toggle:hover {
+            opacity: 0.8;
         }
 
-        /* Add crypto button (first screen) */
+        /* ---------- ADD CRYPTO BUTTON ---------- */
         .add-crypto-btn {
-            background: linear-gradient(105deg, #2B6E9E 0%, #1E4A6E 100%);
+            background: var(--btn-primary-bg);
             border: none;
             width: 100%;
             padding: 18px 0;
@@ -100,7 +175,7 @@
             transform: scale(0.97);
         }
 
-        /* currency grid */
+        /* ---------- CURRENCY GRID ---------- */
         .currency-grid {
             display: flex;
             flex-direction: column;
@@ -110,7 +185,7 @@
             padding-right: 4px;
         }
         .currency-item {
-            background: #1C2630;
+            background: var(--bg-item);
             border-radius: 20px;
             padding: 16px 20px;
             display: flex;
@@ -118,46 +193,46 @@
             gap: 16px;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 1px solid #2A3844;
+            border: 1px solid var(--border-light);
         }
         .currency-item:hover {
-            background: #25323e;
-            border-color: #3F5568;
+            background: var(--bg-item-hover);
+            border-color: var(--accent);
             transform: translateX(3px);
         }
         .currency-icon {
             width: 48px;
             height: 48px;
-            background: #0F1720;
+            background: var(--bg-card);
             border-radius: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.8rem;
             font-weight: bold;
-            color: #FFD966;
+            color: var(--accent-gold);
         }
         .currency-info h4 {
             font-size: 1.2rem;
             font-weight: 600;
-            color: white;
+            color: var(--text-primary);
         }
         .currency-info p {
             font-size: 0.8rem;
-            color: #8EA3BB;
+            color: var(--text-secondary);
             margin-top: 4px;
         }
 
-        /* Deposit details */
+        /* ---------- DEPOSIT CARD ---------- */
         .deposit-card {
-            background: #0F171F;
+            background: var(--bg-card);
             border-radius: 28px;
             padding: 20px;
             margin-top: 8px;
-            border: 1px solid #25313e;
+            border: 1px solid var(--border-color);
         }
         .qr-wrapper {
-            background: white;
+            background: var(--qr-bg);
             padding: 12px;
             border-radius: 24px;
             display: flex;
@@ -177,20 +252,20 @@
         }
         .or-divider {
             text-align: center;
-            color: #6E8BB0;
+            color: var(--text-muted);
             font-size: 0.85rem;
             margin: 14px 0 10px;
             font-weight: 500;
         }
         .address-box {
-            background: #081018;
+            background: var(--bg-input);
             padding: 14px 16px;
             border-radius: 20px;
             word-break: break-all;
             font-family: monospace;
             font-size: 0.85rem;
-            color: #B9D0F0;
-            border: 1px solid #253440;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
             margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
@@ -200,34 +275,36 @@
         .address-text {
             flex: 1;
             letter-spacing: 0.3px;
+            color: var(--text-primary);
         }
         .copy-icon {
-            background: #1E2F3C;
+            background: var(--copy-bg);
             padding: 8px;
             border-radius: 40px;
-            color: #A0C0E0;
+            color: var(--text-secondary);
             cursor: pointer;
             transition: 0.2s;
         }
         .copy-icon:hover {
-            background: #2F4455;
-            color: white;
+            background: var(--copy-hover);
+            color: var(--text-primary);
         }
         .min-details {
             display: flex;
             justify-content: space-between;
-            background: #0C151E;
+            background: var(--bg-card);
             padding: 14px 16px;
             border-radius: 20px;
             margin: 16px 0 12px;
             font-size: 0.9rem;
+            border: 1px solid var(--border-color);
         }
         .min-label {
-            color: #8BA1BE;
+            color: var(--text-muted);
         }
         .min-value {
             font-weight: 600;
-            color: #F0F4FA;
+            color: var(--text-primary);
         }
         .share-btn, .payment-btn {
             width: 100%;
@@ -245,56 +322,67 @@
             gap: 12px;
         }
         .share-btn {
-            background: #1D2A35;
-            color: #BBD6FF;
-            border: 1px solid #344B60;
+            background: var(--share-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--share-border);
+        }
+        .share-btn:hover {
+            background: var(--bg-item-hover);
+            color: var(--text-primary);
         }
         .payment-btn {
-            background: linear-gradient(95deg, #1F6E43, #0F4C2D);
+            background: var(--btn-payment-bg);
             color: white;
             box-shadow: 0 5px 12px rgba(0,0,0,0.3);
         }
         .payment-btn:active {
             transform: scale(0.97);
         }
+        .payment-btn.hidden {
+            display: none;
+        }
         .note-arrival {
             text-align: center;
             font-size: 0.7rem;
-            color: #6C89A6;
+            color: var(--note-color);
             margin-top: 12px;
         }
         .memo-box {
-            background: #0C151E;
+            background: var(--bg-card);
             padding: 14px 16px;
             border-radius: 20px;
             margin: 16px 0 12px;
             display: flex;
             justify-content: space-between;
             font-size: 0.9rem;
+            border: 1px solid var(--border-color);
         }
         .memo-label {
-            color: #8BA1BE;
+            color: var(--text-muted);
         }
         .memo-value {
             font-weight: 600;
-            color: #F0F4FA;
+            color: var(--text-primary);
         }
         hr {
-            border-color: #25313e;
+            border-color: var(--border-color);
             margin: 12px 0;
         }
-        /* scroll */
+
+        /* ---------- SCROLLBAR ---------- */
         .currency-grid::-webkit-scrollbar {
             width: 4px;
         }
         .currency-grid::-webkit-scrollbar-track {
-            background: #1a232e;
+            background: var(--bg-item);
             border-radius: 10px;
         }
         .currency-grid::-webkit-scrollbar-thumb {
-            background: #3F5A75;
+            background: var(--accent);
             border-radius: 10px;
         }
+
+        /* ---------- BOTTOM NAV ---------- */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -302,8 +390,8 @@
             transform: translateX(-50%);
             width: 100%;
             max-width: 500px;
-            background: #131A24;
-            border-top: 1px solid #25313e;
+            background: var(--bg-container);
+            border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
             padding: 10px 8px;
@@ -316,7 +404,7 @@
             align-items: center;
             gap: 3px;
             font-size: 10px;
-            color: #6E8EB0;
+            color: var(--text-muted);
             cursor: pointer;
             text-decoration: none;
             padding: 4px 8px;
@@ -325,14 +413,21 @@
             min-width: 44px;
         }
         .nav-item i { font-size: 20px; }
-        .nav-item.active, .nav-item:hover { color: #D4AF37; }
+        .nav-item.active, .nav-item:hover { color: var(--accent); }
+
+     /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 480px) {
+            .screen { padding: 20px 16px 28px; }
+            .screen-title { font-size: 1.4rem; }
+        }
     </style>
 </head>
 <body>
 <div class="app-container" id="appRoot">
     <!-- dynamic screens injected via JS -->
 </div>
-  <nav class="bottom-nav">
+
+<nav class="bottom-nav">
     <a href="nexvaulttrade_dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
     <a href="nexvaulttrade_deposit.html" class="nav-item active"><i class="fas fa-arrow-down"></i><span>Deposit</span></a>
     <a href="nexvaulttrade_withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
@@ -342,7 +437,13 @@
     <a href="nexvaulttrade_profile.html" class="nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
 </nav>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+    // ---------- SUPABASE ----------
+    const SUPABASE_URL = 'https://vfpxnywxciwxldbhlqhp.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcHhueXd4Y2l3eGxkYmhscWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MzU5MzEsImV4cCI6MjA5ODIxMTkzMX0.mUDHLVKsCL6Jd-ZMvnYWBoyoNf3cKXpbVUuj4qHpHqg';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     // ---------- CURRENCY MASTER DATA (UPDATED ADDRESSES) ----------
     const currencies = [
         { 
@@ -392,7 +493,7 @@
             confirmations: '10 Confirmations', 
             minRaw: 20, 
             assetType: 'XRP',
-            memo: '885659978'   // destination tag
+            memo: '885659978'
         },
         { 
             id: 'ltc', 
@@ -480,13 +581,36 @@
         }
     ];
 
-    // STATE
+    // ---------- STATE ----------
     let currentStep = 'selectWallet';  // 'selectWallet', 'currencyList', 'deposit'
     let selectedCurrency = null;
+    let isAdmin = false;
 
     const appRoot = document.getElementById('appRoot');
 
-    // Helper: generate fresh QR code inside container
+    // ---------- CHECK ADMIN STATUS ----------
+    async function checkAdminStatus() {
+        try {
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) {
+                const { data: profile } = await sb.from('profiles')
+                    .select('role')
+                    .eq('id', session.user.id)
+                    .single();
+                if (profile && profile.role === 'admin') {
+                    isAdmin = true;
+                }
+            }
+        } catch(e) {
+            console.warn('Could not fetch admin status:', e);
+        }
+        // Re-render if on deposit screen
+        if (currentStep === 'deposit' && selectedCurrency) {
+            renderCurrentScreen();
+        }
+    }
+
+    // ---------- HELPER: GENERATE QR ----------
     function generateQRCode(address, elementId = 'qrcode') {
         const qrContainer = document.getElementById(elementId);
         if (!qrContainer) return;
@@ -505,7 +629,7 @@
         }
     }
 
-    // copy to clipboard
+    // ---------- COPY TO CLIPBOARD ----------
     function copyToClipboard(text, triggerElement) {
         navigator.clipboard.writeText(text).then(() => {
             const originalHtml = triggerElement.innerHTML;
@@ -518,7 +642,7 @@
         });
     }
 
-    // share address (native share or copy fallback)
+    // ---------- SHARE ADDRESS ----------
     function shareAddress(address, coinName) {
         if (navigator.share) {
             navigator.share({
@@ -535,7 +659,7 @@
         }
     }
 
-    // simulate admin deposit confirmation and redirect to dashboard
+    // ---------- HANDLE PAYMENT (admin only) ----------
     function handleMadePayment(currency) {
         const depositRequest = {
             currency: currency.name + (currency.network ? ` (${currency.network})` : ''),
@@ -561,29 +685,34 @@
         }, 800);
     }
 
-    // render step 1: Select Wallet screen
+    // ---------- RENDER: SELECT WALLET ----------
     function renderSelectWallet() {
         return `
             <div class="screen">
                 <div class="screen-header">
-                    <div style="width:38px"></div>
-                    <div class="screen-title">Select Wallet</div>
+                    <div class="header-left">
+                        <div style="width:38px"></div>
+                        <div class="screen-title">Select Wallet</div>
+                    </div>
+                    <div class="header-right">
+                        <div class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></div>
+                    </div>
                 </div>
                 <div style="display: flex; justify-content: center; margin: 40px 0 20px;">
-                    <div style="background:#121C26; border-radius: 70px; padding: 20px; width: 100%; text-align: center;">
+                    <div style="background:var(--bg-card-alt); border-radius: 70px; padding: 20px; width: 100%; text-align: center; border: 1px solid var(--border-color);">
                         <i class="fas fa-wallet" style="font-size: 48px; color: #3B82F6; opacity: 0.9;"></i>
-                        <p style="color:#9BB1CA; margin-top: 12px;">Your crypto vault</p>
+                        <p style="color:var(--text-secondary); margin-top: 12px;">Your crypto vault</p>
                     </div>
                 </div>
                 <button class="add-crypto-btn" id="addCryptoBtn">
                     <i class="fas fa-plus-circle"></i> Add crypto asset
                 </button>
-                <p style="text-align:center; font-size:0.7rem; color:#4F6F8F; margin-top: 32px;">Choose asset to deposit</p>
+                <p style="text-align:center; font-size:0.7rem; color:var(--text-muted); margin-top: 32px;">Choose asset to deposit</p>
             </div>
         `;
     }
 
-    // step 2: Currency list (Select Currency to Add)
+    // ---------- RENDER: CURRENCY LIST ----------
     function renderCurrencyList() {
         const currencyItems = currencies.map(coin => `
             <div class="currency-item" data-id="${coin.id}">
@@ -597,18 +726,23 @@
         return `
             <div class="screen">
                 <div class="screen-header">
-                    <button class="back-btn" id="backToWalletBtn"><i class="fas fa-arrow-left"></i></button>
-                    <div class="screen-title">Select Currency to Add</div>
+                    <div class="header-left">
+                        <button class="back-btn" id="backToWalletBtn"><i class="fas fa-arrow-left"></i></button>
+                        <div class="screen-title">Select Currency</div>
+                    </div>
+                    <div class="header-right">
+                        <div class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></div>
+                    </div>
                 </div>
                 <div class="currency-grid" id="currencyGrid">
                     ${currencyItems}
                 </div>
-                <p style="font-size:0.7rem; text-align:center; color:#54738F; margin-top: 18px;">Tap any asset to continue</p>
+                <p style="font-size:0.7rem; text-align:center; color:var(--text-muted); margin-top: 18px;">Tap any asset to continue</p>
             </div>
         `;
     }
 
-    // step 3: Deposit details screen (with optional memo for XRP)
+    // ---------- RENDER: DEPOSIT DETAILS ----------
     function renderDepositScreen(coin) {
         const displayTitle = coin.name === 'USD Coin' ? 'USDC' : (coin.name === 'USD Tether' ? 'USDT' : coin.name);
         const networkSuffix = coin.network ? ` (${coin.network})` : '';
@@ -618,14 +752,22 @@
         const confirmText = coin.confirmations;
         const hasMemo = coin.memo && coin.memo.length > 0;
 
+        // Admin-only: hide payment button from normal users
+        const showPaymentBtn = isAdmin;
+
         return `
             <div class="screen">
                 <div class="screen-header">
-                    <button class="back-btn" id="backToCurrencyBtn"><i class="fas fa-arrow-left"></i></button>
-                    <div class="screen-title">${depositHeader}</div>
+                    <div class="header-left">
+                        <button class="back-btn" id="backToCurrencyBtn"><i class="fas fa-arrow-left"></i></button>
+                        <div class="screen-title">${depositHeader}</div>
+                    </div>
+                    <div class="header-right">
+                        <div class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></div>
+                    </div>
                 </div>
                 <div class="deposit-card">
-                    <div style="text-align: center; font-size: 0.9rem; color:#B9D2F0;">Scan the QR code to get Receive address</div>
+                    <div style="text-align: center; font-size: 0.9rem; color:var(--text-secondary);">Scan the QR code to get Receive address</div>
                     <div class="qr-wrapper">
                         <div id="qrcode"></div>
                     </div>
@@ -650,14 +792,32 @@
                         <span class="min-value">${confirmText}</span>
                     </div>
                     <button class="share-btn" id="shareAddressBtn"><i class="fas fa-share-alt"></i> Share Address</button>
-                    <button class="payment-btn" id="paymentMadeBtn"><i class="fas fa-check-circle"></i> I have made payment</button>
+                    ${showPaymentBtn ? `
+                        <button class="payment-btn" id="paymentMadeBtn"><i class="fas fa-check-circle"></i> I have made payment</button>
+                    ` : `
+                        <div style="margin-top: 12px; padding: 12px; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border-color); text-align: center; font-size: 0.8rem; color: var(--text-muted);">
+                            <i class="fas fa-info-circle"></i> After sending, admin will confirm your deposit.
+                        </div>
+                    `}
                     <div class="note-arrival">* Admin will confirm deposit after required confirmations</div>
                 </div>
             </div>
         `;
     }
-    // attach listeners after rendering dynamic steps
+
+    // ---------- ATTACH EVENT LISTENERS ----------
     function attachEventListeners() {
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('light');
+                const icon = themeToggle.querySelector('i');
+                icon.classList.toggle('fa-moon');
+                icon.classList.toggle('fa-sun');
+            });
+        }
+
         // Step 1: Add crypto asset
         const addBtn = document.getElementById('addCryptoBtn');
         if (addBtn) {
@@ -719,7 +879,7 @@
             });
         }
 
-        // share address
+        // Step 3: share address
         const shareBtn = document.getElementById('shareAddressBtn');
         if (shareBtn && selectedCurrency) {
             shareBtn.addEventListener('click', () => {
@@ -727,15 +887,15 @@
             });
         }
 
-        // I have made payment -> redirect & admin mock
+        // Step 3: I have made payment (admin only)
         const paymentBtn = document.getElementById('paymentMadeBtn');
-        if (paymentBtn && selectedCurrency) {
+        if (paymentBtn && selectedCurrency && isAdmin) {
             paymentBtn.addEventListener('click', () => {
                 handleMadePayment(selectedCurrency);
             });
         }
 
-        // Re-generate QR if we are on deposit screen and qrcode container exists
+  // Re-generate QR if we are on deposit screen
         if (currentStep === 'deposit' && selectedCurrency) {
             const qrContainer = document.getElementById('qrcode');
             if (qrContainer) {
@@ -750,7 +910,7 @@
         }
     }
 
-    // main render
+    // ---------- MAIN RENDER ----------
     function renderCurrentScreen() {
         if (!appRoot) return;
         let html = '';
@@ -768,9 +928,26 @@
         attachEventListeners();
     }
 
-    // Initial render
-    renderCurrentScreen();
+    // ---------- THEME PERSISTENCE ----------
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('nexvault_theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light');
+            const toggle = document.querySelector('.theme-toggle i');
+            if (toggle) {
+                toggle.classList.remove('fa-moon');
+                toggle.classList.add('fa-sun');
+            }
+        }
+    }
+    document.addEventListener('DOMContentLoaded', loadTheme);
+
+    // ---------- INIT ----------
+    (async () => {
+        await checkAdminStatus();
+        renderCurrentScreen();
+    })();
 </script>
 </body>
 </html>
-
+ 
