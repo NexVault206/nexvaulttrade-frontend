@@ -18,21 +18,6 @@
         }
         :root {
             /* DARK MODE (default) */
-            --bg-primary: #F8F9FC;
-            --bg-secondary: #FFFFFF;
-            --bg-card: #FFFFFF;
-            --bg-elevated: #F0F2F7;
-            --border: #E2E8F0;
-            --text-primary: #1A1D2E;
-            --text-secondary: #5A6478;
-            --accent: #C99A2B;
-            --accent-hover: #B0861E;
-            --success: #10B981;
-            --danger: #EF4444;
-            --shadow: 0 4px 20px rgba(0,0,0,0.06);
-        }
-        body.dark {
-            /* DARK MODE */
             --bg-primary: #0A0E17;
             --bg-secondary: #0F1624;
             --bg-card: #0F1624;
@@ -45,6 +30,21 @@
             --success: #2BE07E;
             --danger: #FF4D4D;
             --shadow: none;
+        }
+        body.light {
+            /* LIGHT MODE – improved */
+            --bg-primary: #F8F9FC;
+            --bg-secondary: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --bg-elevated: #F0F2F7;
+            --border: #E8ECF1;
+            --text-primary: #1A1D2E;
+            --text-secondary: #5A6478;
+            --accent: #C99A2B;
+            --accent-hover: #B0861E;
+            --success: #10B981;
+            --danger: #EF4444;
+            --shadow: 0 4px 20px rgba(0,0,0,0.04);
         }
         .app-container { max-width: 1280px; margin: 0 auto; }
 
@@ -79,7 +79,7 @@
             font-size: 22px;
             color: #0A0E17;
         }
-        body.dark .logo-icon {
+        body.light .logo-icon {
             color: #1A1D2E;
         }
         .logo-text {
@@ -105,7 +105,7 @@
             color: var(--text-primary);
             transition: 0.2s;
         }
-        body.dark .theme-toggle {
+        body.light .theme-toggle {
             background: #FFFFFF;
             border-color: #D1D5DB;
         }
@@ -118,7 +118,7 @@
             font-weight: 500;
             color: var(--accent);
         }
-        body.dark .badge-status {
+        body.light .badge-status {
             background: rgba(201, 154, 43, 0.10);
             border-color: rgba(201, 154, 43, 0.3);
         }
@@ -158,7 +158,7 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        body.dark .quick-deposit-btn { color: #1A1D2E; }
+        body.light .quick-deposit-btn { color: #1A1D2E; }
         .quick-deposit-btn:hover { background: var(--accent-hover); }
 
         /* ---------- BALANCE CARD ---------- */
@@ -171,7 +171,7 @@
             box-shadow: var(--shadow);
         }
         .balance-label { font-size: 14px; color: var(--text-secondary); }
-        .balance-amount { font-size: 36px; font-weight: 800; margin: 8px 0 4px; }
+        .balance-amount { font-size: 56px; font-weight: 800; margin: 8px 0 4px; }
         .balance-note {
             color: var(--success);
             font-size: 13px;
@@ -202,7 +202,7 @@
             align-items: center;
             gap: 8px;
         }
-        body.dark .btn-primary { color: #1A1D2E; }
+        body.light .btn-primary { color: #1A1D2E; }
         .btn-primary:hover { background: var(--accent-hover); }
         .btn-secondary {
             background: var(--bg-secondary);
@@ -287,7 +287,7 @@
             font-size: 12px;
             color: var(--accent);
         }
-        body.dark .coin-icon { background: #EFF2F7; }
+        body.light .coin-icon { background: #EFF2F7; }
         .price-change.negative { color: var(--danger); }
         .price-change.positive { color: var(--success); }
 
@@ -327,7 +327,7 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        body.dark .copy-btn { background: #E8ECF1; color: #1A1D2E; }
+        body.light .copy-btn { background: #E8ECF1; color: #1A1D2E; }
         .refer-stats {
             display: flex;
             justify-content: space-between;
@@ -403,7 +403,7 @@
             z-index: 100;
             transition: background 0.3s;
         }
-        body.dark .bottom-nav { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); }
+        body.light .bottom-nav { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); }
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -437,9 +437,9 @@
             box-shadow: 0 6px 16px rgba(212,175,55,0.4);
             transition: 0.2s;
         }
-        body.dark .message-float { box-shadow: 0 6px 20px rgba(201,154,43,0.25); }
+        body.light .message-float { box-shadow: 0 6px 20px rgba(201,154,43,0.25); }
         .message-float i { color: #0A0E17; font-size: 24px; }
-        body.dark .message-float i { color: #1A1D2E; }
+        body.light .message-float i { color: #1A1D2E; }
         .message-float:hover { transform: scale(1.05); }
 
         /* ---------- MESSAGE MODAL ---------- */
@@ -513,7 +513,7 @@
             border: 1px solid var(--border);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        body.dark .toast-msg { background: #FFFFFF; border-color: #D1D5DB; }
+        body.light .toast-msg { background: #FFFFFF; border-color: #D1D5DB; }
 
         /* ---------- FOREX MARKET SECTION ---------- */
         .forex-section {
@@ -589,7 +589,7 @@
             border-color: var(--accent);
             color: #0A0E17;
         }
-        body.dark .forex-pair-chip.active { color: #1A1D2E; }
+        body.light .forex-pair-chip.active { color: #1A1D2E; }
         .forex-pair-chip:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
         .forex-chart-container {
             border-radius: 20px;
@@ -1058,19 +1058,13 @@
     fetchMarketData();
     setInterval(fetchMarketData, 60000);
 
-    // ---------- GLOBAL THEME TOGGLE ----------
+    // ---------- THEME TOGGLE ----------
     const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = themeToggle.querySelector('i');
-    function applyTheme(isDark) {
-        if (isDark) { document.body.classList.add('dark'); themeIcon.className = 'fas fa-sun'; }
-        else { document.body.classList.remove('dark'); themeIcon.className = 'fas fa-moon'; }
-    }
-    applyTheme(localStorage.getItem('nvt_theme') === 'dark');
     themeToggle.addEventListener('click', () => {
-        const isDark = !document.body.classList.contains('dark');
-        applyTheme(isDark);
-        localStorage.setItem('nvt_theme', isDark ? 'dark' : 'light');
-        setTimeout(() => loadTradingViewChart(activeTVPair), 100);
+        document.body.classList.toggle('light');
+        const icon = themeToggle.querySelector('i');
+        icon.classList.toggle('fa-moon');
+        icon.classList.toggle('fa-sun');
     });
 
     // ---------- NAVIGATION ----------
@@ -1442,7 +1436,10 @@
         });
     });
 
-
+    // Re-render chart on theme toggle to match dark/light
+    themeToggle.addEventListener('click', () => {
+        setTimeout(() => loadTradingViewChart(activeTVPair), 100);
+    });
 
     async function initForex() {
         loadTradingViewChart(activeTVPair);

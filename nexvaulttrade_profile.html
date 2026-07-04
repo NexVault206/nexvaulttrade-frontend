@@ -34,7 +34,7 @@
             --warning: #FFB347;
             --danger: #FF4D4D;
         }
-        body.dark {
+        body.light {
             --bg-primary: #F1F5F9;
             --bg-secondary: #FFFFFF;
             --bg-card: #FFFFFF;
@@ -218,23 +218,6 @@
         .nav-item.active,.nav-item:hover{color:var(--accent);}
     </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-        /* ===== GLOBAL THEME ===== */
-        html.dark-mode body, body.dark {
-            --bg-primary: #0A0E17!important;
-            --bg-secondary: #0F1624!important;
-            --bg-card: #0F1624!important;
-            --bg-elevated: #131A2C!important;
-            --border: #1E293B!important;
-            --text-primary: #EFF3FC!important;
-            --text-secondary: #94A3B8!important;
-            --accent: #D4AF37!important;
-            --success: #2BE07E!important;
-            --danger: #FF4D4D!important;
-            background: #0A0E17!important;
-            color: #EFF3FC!important;
-        }</style>
-<script>(function(){if(localStorage.getItem('nvt_theme')==='dark'){document.documentElement.classList.add('dark-mode');document.addEventListener('DOMContentLoaded',function(){document.body.classList.add('dark');var btn=document.getElementById('themeToggle');if(btn){var i=btn.querySelector('i');if(i){i.classList.remove('fa-moon');i.classList.add('fa-sun');}}})}})();</script>
 </head>
 <body>
 <div class="app-container">
@@ -342,12 +325,7 @@
 
         // Theme toggle
         document.getElementById('themeToggle').addEventListener('click', function() {
-            var _isDark = !document.body.classList.contains('dark');
-            document.body.classList.toggle('dark', _isDark);
-            document.documentElement.classList.toggle('dark-mode', _isDark);
-            localStorage.setItem('nvt_theme', _isDark ? 'dark' : 'light');
-            var _icon = document.getElementById('themeToggle') ? document.getElementById('themeToggle').querySelector('i') : null;
-            if (_icon) { _icon.className = _isDark ? 'fas fa-sun' : 'fas fa-moon'; };
+            document.body.classList.toggle('light');
             const icon = this.querySelector('i');
             icon.classList.toggle('fa-moon');
             icon.classList.toggle('fa-sun');

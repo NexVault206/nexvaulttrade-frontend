@@ -33,7 +33,7 @@
             --lock-bg: #2E1E28;
             --lock-text: #FF8A7A;
         }
-        body.dark {
+        body.light {
             --bg-body: #F3F6FA;
             --bg-container: #FFFFFF;
             --bg-card: #F0F4F9;
@@ -112,23 +112,6 @@
         @media (max-width: 480px) { .screen { padding: 20px 16px 28px; } .balance-row { flex-direction: column; align-items: flex-start; gap: 8px; } .step-circle { width: 40px; height: 40px; font-size: 1rem; } }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-        /* ===== GLOBAL THEME ===== */
-        html.dark-mode body, body.dark {
-            --bg-primary: #0A0E17!important;
-            --bg-secondary: #0F1624!important;
-            --bg-card: #0F1624!important;
-            --bg-elevated: #131A2C!important;
-            --border: #1E293B!important;
-            --text-primary: #EFF3FC!important;
-            --text-secondary: #94A3B8!important;
-            --accent: #D4AF37!important;
-            --success: #2BE07E!important;
-            --danger: #FF4D4D!important;
-            background: #0A0E17!important;
-            color: #EFF3FC!important;
-        }</style>
-<script>(function(){if(localStorage.getItem('nvt_theme')==='dark'){document.documentElement.classList.add('dark-mode');document.addEventListener('DOMContentLoaded',function(){document.body.classList.add('dark');var btn=document.getElementById('themeToggle');if(btn){var i=btn.querySelector('i');if(i){i.classList.remove('fa-moon');i.classList.add('fa-sun');}}})}})();</script>
 </head>
 <body>
 <div class="withdrawal-container" id="withdrawApp"></div>
@@ -663,12 +646,7 @@
         const themeToggle = document.getElementById('themeToggle');
         if (themeToggle) {
             themeToggle.addEventListener('click', () => {
-                var _isDark = !document.body.classList.contains('dark');
-            document.body.classList.toggle('dark', _isDark);
-            document.documentElement.classList.toggle('dark-mode', _isDark);
-            localStorage.setItem('nvt_theme', _isDark ? 'dark' : 'light');
-            var _icon = document.getElementById('themeToggle') ? document.getElementById('themeToggle').querySelector('i') : null;
-            if (_icon) { _icon.className = _isDark ? 'fas fa-sun' : 'fas fa-moon'; };
+                document.body.classList.toggle('light');
                 const icon = themeToggle.querySelector('i');
                 icon.classList.toggle('fa-moon');
                 icon.classList.toggle('fa-sun');
