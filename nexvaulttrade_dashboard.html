@@ -1195,9 +1195,8 @@
         if (profile) {
             // Update name
             const fullName = (profile && profile.full_name) ? profile.full_name : session.user.email.split('@')[0];
-            const firstName = fullName.split(' ')[0];
             const nameEl = document.getElementById('userName');
-            if (nameEl) nameEl.textContent = firstName;
+            if (nameEl) nameEl.textContent = fullName;
             const nameAlt = document.getElementById('userNameAlt');
             if (nameAlt) nameAlt.textContent = fullName.toUpperCase();
             const refLink = document.getElementById('refLink');
