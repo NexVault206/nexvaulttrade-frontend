@@ -398,13 +398,13 @@ async function loadMessages() {
     document.getElementById('statMessages').textContent = data.length;
     if (!data.length) { document.getElementById('messagesList').innerHTML = '<div class="empty">No messages yet</div>'; return; }
     document.getElementById('messagesList').innerHTML = data.map(m => `
-      <div class="msg-card" style="${m.read ? 'opacity:0.7' : ''}">
-        <div class="msg-subject">${m.subject || 'No subject'} ${!m.read ? '<span style="background:#D4AF37;color:#0A0E17;padding:2px 8px;border-radius:10px;font-size:0.7rem;">NEW</span>' : ''}</div>
+      <div class="msg-card" style="${m.is_read ? 'opacity:0.7' : ''}">
+        <div class="msg-subject">${m.subject || 'No subject'} ${!m.is_read ? '<span style="background:#D4AF37;color:#0A0E17;padding:2px 8px;border-radius:10px;font-size:0.7rem;">NEW</span>' : ''}</div>
         <div class="msg-body">${m.message}</div>
         <div class="msg-meta">${m.profiles?.full_name || ''} (${m.profiles?.email || ''}) • ${new Date(m.created_at).toLocaleDateString()}</div>
         <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
           <button class="action-btn blue" onclick="openReply('${m.id}','${m.profiles?.email || ''}','${(m.subject||'').replace(/'/g,"\\\'")}')">✉ Reply</button>
-          ${!m.read ? `<button class="action-btn green" onclick="markRead('${m.id}')">✅ Mark Read</button>` : ''}
+          ${!m.is_read ? `<button class="action-btn green" onclick="markRead('${m.id}')">✅ Mark Read</button>` : ''}
         </div>
       </div>
     `).join('');
@@ -440,7 +440,7 @@ async function sendReply() {
       body: JSON.stringify({ toEmail: currentReplyEmail, message: body, msgId: currentReplyMsgId })
     });
     if (!res.ok) throw new Error('Failed');
-    await sb.from('admin_messages').update({ read: true }).eq('id', currentReplyMsgId);
+    await sb.from('admin_messages').update({ is_read: true }).eq('id', currentReplyMsgId);
     showToast('Reply sent ✅');
     closeReply();
     loadMessages();
@@ -450,7 +450,7 @@ async function sendReply() {
 }
 
 async function markRead(msgId) {
-  await sb.from('admin_messages').update({ read: true }).eq('id', msgId);
+  await sb.from('admin_messages').update({ is_read: true }).eq('id', msgId);
   showToast('Marked as read');
   loadMessages();
 }

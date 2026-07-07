@@ -1290,7 +1290,7 @@
                 user_id: session.user.id,
                 subject,
                 message,
-                read: false
+                is_read: false
             });
             if (error) throw error;
             await fetch('https://nexvaulttrade-backend-1.onrender.com/api/messages/send', {
