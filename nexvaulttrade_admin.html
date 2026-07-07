@@ -183,11 +183,11 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ── SESSION CHECK ON LOAD ───────────────────────────────────────
+const ADMIN_EMAILS = ['nexvaulttrade@gmail.com'];
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
-    const { data: profile } = await sb.from('profiles').select('role').eq('id', session.user.id).single();
-    if (profile && profile.role === 'admin') { showPanel(); loadAll(); }
+    if (ADMIN_EMAILS.includes(session.user.email.toLowerCase())) { showPanel(); loadAll(); }
     else { await sb.auth.signOut(); }
   }
 })();
@@ -209,8 +209,7 @@ async function adminLogin() {
   try {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd });
     if (error) { err.textContent = error.message; err.style.display = 'block'; return; }
-    const { data: profile } = await sb.from('profiles').select('role').eq('id', data.user.id).single();
-    if (!profile || profile.role !== 'admin') {
+    if (!ADMIN_EMAILS.includes(data.user.email.toLowerCase())) {
       await sb.auth.signOut();
       err.textContent = 'Access denied. Not an admin account.';
       err.style.display = 'block'; return;
