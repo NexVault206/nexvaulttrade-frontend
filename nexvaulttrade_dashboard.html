@@ -1059,12 +1059,23 @@
     setInterval(fetchMarketData, 60000);
 
     // ---------- THEME TOGGLE ----------
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('nexvault_theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light');
+            const icon = document.querySelector('#themeToggle i');
+            if (icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
+        }
+    }
+    loadTheme();
+
     const themeToggle = document.getElementById('themeToggle');
     themeToggle.addEventListener('click', () => {
         document.body.classList.toggle('light');
         const icon = themeToggle.querySelector('i');
         icon.classList.toggle('fa-moon');
         icon.classList.toggle('fa-sun');
+        localStorage.setItem('nexvault_theme', document.body.classList.contains('light') ? 'light' : 'dark');
     });
 
     // ---------- NAVIGATION ----------

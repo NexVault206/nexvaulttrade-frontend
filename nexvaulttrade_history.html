@@ -89,6 +89,8 @@
         <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <div class="content">
         <div class="tabs">
             <button class="tab-btn active" onclick="showTab('transactions',this)">
@@ -131,25 +133,27 @@
     </nav>
 
 <script>
-    if (!localStorage.getItem('nvt_token')) window.location.href = 'nexvaulttrade_login.html';
-    const API_BASE = 'https://nexvaulttrade-backend.onrender.com/api';
-    const authToken = localStorage.getItem('nvt_token');
+    // ---------- SUPABASE AUTH (matches dashboard.html) ----------
+    const SUPABASE_URL = 'https://vfpxnywxciwxldbhlqhp.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcHhueXd4Y2l3eGxkYmhscWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MzU5MzEsImV4cCI6MjA5ODIxMTkzMX0.mUDHLVKsCL6Jd-ZMvnYWBoyoNf3cKXpbVUuj4qHpHqg';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let currentUser = null;
 
     async function loadUser() {
-        try {
-            const res = await fetch(API_BASE + '/user/me', { headers:{'x-auth-token':authToken} });
-            if (res.ok) currentUser = await res.json();
-        } catch(e) {}
-        if (!currentUser) {
-            const local = localStorage.getItem('nexvault_users');
-            if (local) {
-                const users = JSON.parse(local);
-                const storedId = authToken?.replace('local_','');
-                currentUser = users.find(u => u.id === storedId) || users[0];
-            }
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session) {
+            window.location.href = 'nexvaulttrade_login.html';
+            return;
         }
-        if (currentUser) { renderTransactions(); renderWithdrawals(); }
+        const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+        currentUser = {
+            id: session.user.id,
+            email: session.user.email,
+            full_name: profile?.full_name || session.user.email.split('@')[0],
+            transactions: profile?.transactions || []
+        };
+        renderTransactions();
+        renderWithdrawals();
     }
 
     function showTab(tab, btn) {
@@ -214,11 +218,23 @@
         `).join('');
     }
 
+    // ---------- THEME PERSISTENCE ----------
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('nexvault_theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light');
+            const icon = document.querySelector('#themeToggle i');
+            if (icon) { icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); }
+        }
+    }
+    loadTheme();
+
     document.getElementById('themeToggle').addEventListener('click', () => {
         document.body.classList.toggle('light');
         const icon = document.querySelector('#themeToggle i');
         icon.classList.toggle('fa-moon');
         icon.classList.toggle('fa-sun');
+        localStorage.setItem('nexvault_theme', document.body.classList.contains('light') ? 'light' : 'dark');
     });
 
     loadUser();
