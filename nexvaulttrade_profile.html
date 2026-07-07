@@ -324,11 +324,13 @@
         }
 
         // Theme toggle
+        (function loadTheme(){if(localStorage.getItem('nexvault_theme')==='light'){document.body.classList.add('light');var ic=document.querySelector('#themeToggle i');if(ic){ic.classList.remove('fa-moon');ic.classList.add('fa-sun');}}})();
         document.getElementById('themeToggle').addEventListener('click', function() {
             document.body.classList.toggle('light');
             const icon = this.querySelector('i');
             icon.classList.toggle('fa-moon');
             icon.classList.toggle('fa-sun');
+                    localStorage.setItem('nexvault_theme', document.body.classList.contains('light') ? 'light' : 'dark');
         });
 
         // Back to dashboard
