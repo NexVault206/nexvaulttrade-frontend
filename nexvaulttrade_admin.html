@@ -512,7 +512,7 @@ async function loadChatMessages(userId, silent = false) {
     const adminId = (await sb.auth.getSession()).data.session?.user.id;
     let html = `<div class="chat-box" id="chatBox">`;
     data.forEach(msg => {
-      const isAdmin = msg.admin_id === adminId;
+      const isAdmin = msg.sender_type === 'admin';
       html += `<div class="chat-msg ${isAdmin ? 'admin' : 'user'}">
         ${msg.message}
         <span class="time">${new Date(msg.created_at).toLocaleTimeString()}</span>
@@ -542,7 +542,6 @@ async function sendChatMessage() {
   try {
     const { error } = await sb.from('chat_messages').insert({
       user_id: currentChatUserId,
-      admin_id: adminId,
       message: msg,
       sender_type: 'admin',
       created_at: new Date().toISOString()
