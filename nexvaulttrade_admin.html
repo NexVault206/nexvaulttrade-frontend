@@ -463,7 +463,7 @@ async function loadChatUsers() {
   try {
     // Get all users who have sent at least one chat message (distinct)
     const { data: messages, error } = await sb.from('chat_messages')
-      .select('user_id, profiles(full_name, email)')
+      .select('user_id')
       .order('created_at', { ascending: false });
     if (error) { alert('LOAD USERS ERROR: ' + JSON.stringify(error)); throw error; }
     const userIds = [...new Set(messages.map(m => m.user_id))];
