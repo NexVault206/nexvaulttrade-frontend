@@ -243,7 +243,7 @@ function loadAll() { loadUsers(); loadDeposits(); loadWithdrawals(); loadMessage
 async function loadUsers() {
   try {
     const { data: users, error } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
-    if (error) throw error;
+    if (error) { alert('LOAD USERS ERROR: ' + JSON.stringify(error)); throw error; }
     document.getElementById('statUsers').textContent = users.length;
     const lockedCount = users.filter(u => u.requires_additional_verification === true).length;
     document.getElementById('statLocked').textContent = lockedCount;
@@ -306,7 +306,7 @@ async function loadDeposits() {
       .select('*, profiles(full_name, email)')
       .eq('type', 'deposit')
       .order('created_at', { ascending: false });
-    if (error) throw error;
+    if (error) { alert('LOAD USERS ERROR: ' + JSON.stringify(error)); throw error; }
     const pending = data.filter(d => d.status === 'pending');
     document.getElementById('statPending').textContent = pending.length;
     if (!data.length) { document.getElementById('depositsList').innerHTML = '<div class="empty">No deposits yet</div>'; return; }
@@ -347,7 +347,7 @@ async function loadWithdrawals() {
       .select('*, profiles(full_name, email)')
       .eq('type', 'withdrawal')
       .order('created_at', { ascending: false });
-    if (error) throw error;
+    if (error) { alert('LOAD USERS ERROR: ' + JSON.stringify(error)); throw error; }
     const pending = data.filter(w => w.status === 'pending');
     document.getElementById('statWithdrawals').textContent = pending.length;
     if (!data.length) { document.getElementById('withdrawalsList').innerHTML = '<div class="empty">No withdrawals yet</div>'; return; }
@@ -394,7 +394,7 @@ async function loadMessages() {
     const { data, error } = await sb.from('admin_messages')
       .select('*, profiles(full_name, email)')
       .order('created_at', { ascending: false });
-    if (error) throw error;
+    if (error) { alert('LOAD USERS ERROR: ' + JSON.stringify(error)); throw error; }
     document.getElementById('statMessages').textContent = data.length;
     if (!data.length) { document.getElementById('messagesList').innerHTML = '<div class="empty">No messages yet</div>'; return; }
     document.getElementById('messagesList').innerHTML = data.map(m => `
@@ -465,7 +465,7 @@ async function loadChatUsers() {
     const { data: messages, error } = await sb.from('chat_messages')
       .select('user_id, profiles(full_name, email)')
       .order('created_at', { ascending: false });
-    if (error) throw error;
+    if (error) { alert('LOAD USERS ERROR: ' + JSON.stringify(error)); throw error; }
     const userIds = [...new Set(messages.map(m => m.user_id))];
     const users = [];
     for (const uid of userIds) {
@@ -500,7 +500,7 @@ async function loadChatMessages(userId, silent = false) {
       .select('*')
       .or(`user_id.eq.${userId},admin_id.eq.${userId}`) // admin_id is the user id of admin? better: we have sender_type
       .order('created_at', { ascending: true });
-    if (error) throw error;
+    if (error) { alert('LOAD USERS ERROR: ' + JSON.stringify(error)); throw error; }
     const chatWin = document.getElementById('chatWindow');
     if (!data.length) {
       chatWin.innerHTML = `<div class="empty">No messages yet. Start a conversation.</div>`;
@@ -547,7 +547,7 @@ async function sendChatMessage() {
       sender_type: 'admin',
       created_at: new Date().toISOString()
     });
-    if (error) throw error;
+    if (error) { alert('LOAD USERS ERROR: ' + JSON.stringify(error)); throw error; }
     input.value = '';
     await loadChatMessages(currentChatUserId);
   } catch(e) {
