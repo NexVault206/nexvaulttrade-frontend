@@ -498,7 +498,7 @@ async function loadChatMessages(userId, silent = false) {
   try {
     const { data, error } = await sb.from('chat_messages')
       .select('*')
-      .or(`user_id.eq.${userId},admin_id.eq.${userId}`) // admin_id is the user id of admin? better: we have sender_type
+      .eq('user_id', userId)
       .order('created_at', { ascending: true });
     if (error) { alert('LOAD USERS ERROR: ' + JSON.stringify(error)); throw error; }
     const chatWin = document.getElementById('chatWindow');
