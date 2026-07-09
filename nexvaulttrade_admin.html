@@ -155,6 +155,10 @@ input:focus{border-color:var(--accent);}
           <div id="chatWindow">
             <div class="empty" style="padding:20px;">Select a user to start chatting.</div>
           </div>
+          <div class="chat-input-wrap">
+            <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+          </div>
         </div>
       </div>
     </div>
@@ -519,11 +523,7 @@ async function loadChatMessages(userId, silent = false) {
       </div>`;
     });
     html += `</div>
-      <div class="chat-input-wrap">
-        <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendChatMessage()">
-        <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
-      </div>`;
-    chatWin.innerHTML = html;
+      chatWin.innerHTML = html;
     // Scroll to bottom
     const box = document.getElementById('chatBox');
     if (box) box.scrollTop = box.scrollHeight;
