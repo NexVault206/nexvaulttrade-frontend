@@ -522,7 +522,7 @@ async function loadChatMessages(userId, silent = false) {
         <span class="time">${new Date(msg.created_at).toLocaleTimeString()}</span>
       </div>`;
     });
-    html += `</div>
+    html += `</div>`;
       chatWin.innerHTML = html;
     // Scroll to bottom
     const box = document.getElementById('chatBox');
