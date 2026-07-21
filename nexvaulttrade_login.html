@@ -134,7 +134,13 @@
                         document.querySelector('.login-card').classList.add('hidden');
                         document.getElementById('otpVerifyCard').classList.remove('hidden');
                         document.getElementById('otpVerifySub').textContent = 'Enter the 6-digit code sent to ' + email;
-                        await supabase.auth.resend({ type: 'signup', email: email });
+                        const { error: resendError } = await supabase.auth.resend({ type: 'signup', email: email });
+                        if (resendError) {
+                            if (resendError.message && resendError.message.toLowerCase().includes('security purposes')) {
+                                return showMessage('⏳ You can only request a new code after 60sec. Please wait and try again.', 'error');
+                            }
+                            return showMessage('❌ Could not send code: ' + resendError.message, 'error');
+                        }
                         showOtpMsg('Code sent to ' + email, 'info');
                         startOtpTimer();
                         document.getElementById('v1').focus();
@@ -226,8 +232,17 @@
         document.getElementById('otpResendBtn').addEventListener('click', async function() {
             this.disabled = true; document.getElementById('otpTimer').textContent = '...';
             const { error } = await supabase.auth.resend({ type: 'signup', email: pendingEmail });
-            if (error) { showOtpMsg('Could not resend: ' + error.message, 'error'); }
-            else { showOtpMsg('New code sent!', 'info'); vDigits.forEach(function(d) { d.value = ''; }); vDigits[0].focus(); }
+            if (error) {
+                if (error.message && error.message.toLowerCase().includes('security purposes')) {
+                    showOtpMsg('⏳ You can only request a new code after 60sec.', 'error');
+                } else {
+                    showOtpMsg('Could not resend: ' + error.message, 'error');
+                }
+            } else {
+                showOtpMsg('New code sent!', 'info');
+                vDigits.forEach(function(d) { d.value = ''; });
+                vDigits[0].focus();
+            }
             startOtpTimer();
         });
 
