@@ -155,9 +155,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 var rawMsg = r.error.message || r.error.msg || r.error.error_description || JSON.stringify(r.error);
                 return showMsg("msgBox", "DEBUG [" + (r.error.status || "?") + "]: " + rawMsg, "error");
             }
-            if (r.data && r.data.user) {
-                await sb.from("profiles").upsert({ id: r.data.user.id, full_name: name, email: email }, { onConflict: "id" });
-            }
             await sb.auth.signOut();
             pendingEmail = email;
             showOtp(email);
