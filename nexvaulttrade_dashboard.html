@@ -794,17 +794,17 @@
         <div class="stats-grid">
             <div class="stat-pill">
                 <div class="stat-label">Total Profit</div>
-                <div class="stat-value">$0.00</div>
+                <div class="stat-value" id="totalProfitValue">$0.00</div>
                 <div class="stat-change">↗ +2.5% Last period</div>
             </div>
             <div class="stat-pill">
                 <div class="stat-label">Bonus</div>
-                <div class="stat-value">$0.00</div>
+                <div class="stat-value" id="bonusValue">$0.00</div>
                 <div class="stat-change">🔒 Rewards & Promotions</div>
             </div>
             <div class="stat-pill">
                 <div class="stat-label">Total Deposit</div>
-                <div class="stat-value">$0.00</div>
+                <div class="stat-value" id="totalDepositValue">$0.00</div>
                 <div class="stat-change">All time</div>
             </div>
             <div class="stat-pill">
@@ -1206,6 +1206,15 @@
             // Update balance
             const balEl = document.getElementById("balanceAmount");
             if (balEl) balEl.textContent = '$' + (profile.balance || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+            // Update total profit
+            const profitEl = document.getElementById("totalProfitValue");
+            if (profitEl) profitEl.textContent = '$' + (profile.total_earnings || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+            // Update bonus
+            const bonusEl = document.getElementById("bonusValue");
+            if (bonusEl) bonusEl.textContent = '$' + (profile.bonus || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+            // Update total deposit
+            const depositEl = document.getElementById("totalDepositValue");
+            if (depositEl) depositEl.textContent = '$' + (profile.total_deposited || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
             // Update verified status
             const badge = document.getElementById('accountBadge');
             if (badge) {

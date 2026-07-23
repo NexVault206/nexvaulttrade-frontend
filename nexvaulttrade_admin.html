@@ -265,6 +265,18 @@ async function loadUsers() {
           <input class="bal-input" type="number" id="bal_${u.id}" value="${(u.balance||0).toFixed(2)}" placeholder="New balance">
           <button class="action-btn blue" onclick="setBalance('${u.id}')">Set Balance</button>
         </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+            <input class="bal-input" type="number" id="profit_${u.id}" value="${(u.total_earnings||0).toFixed(2)}" placeholder="Total profit">
+            <button class="action-btn blue" onclick="setTotalProfit('${u.id}')">Set Profit</button>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+            <input class="bal-input" type="number" id="bonus_${u.id}" value="${(u.bonus||0).toFixed(2)}" placeholder="Bonus">
+            <button class="action-btn blue" onclick="setBonus('${u.id}')">Set Bonus</button>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+            <input class="bal-input" type="number" id="deposit_${u.id}" value="${(u.total_deposited||0).toFixed(2)}" placeholder="Total deposit">
+            <button class="action-btn blue" onclick="setTotalDeposit('${u.id}')">Set Deposit</button>
+            </div>
         <div class="actions">
           <button class="action-btn ${u.is_verified ? 'red' : 'green'}" onclick="toggleVerify('${u.id}', ${!u.is_verified})">${u.is_verified ? 'Unverify' : 'Verify'}</button>
           <button class="action-btn ${u.requires_additional_verification ? 'green' : 'yellow'}" onclick="toggleLock('${u.id}', ${!u.requires_additional_verification})">${u.requires_additional_verification ? '🔓 Unlock' : '🔒 Lock'}</button>
@@ -281,6 +293,31 @@ async function setBalance(userId) {
   const { error } = await sb.from('profiles').update({ balance: val }).eq('id', userId);
   if (error) { showToast('Error: ' + error.message); return; }
   showToast('Balance updated ✅'); loadUsers();
+}
+
+
+async function setTotalProfit(userId) {
+  const val = parseFloat(document.getElementById(`profit_${userId}`).value);
+  if (isNaN(val)) { showToast('Enter a valid amount'); return; }
+  const { error } = await sb.from('profiles').update({ total_earnings: val }).eq('id', userId);
+  if (error) { showToast('Error: ' + error.message); return; }
+  showToast('Total profit updated ✅'); loadUsers();
+}
+
+async function setBonus(userId) {
+  const val = parseFloat(document.getElementById(`bonus_${userId}`).value);
+  if (isNaN(val)) { showToast('Enter a valid amount'); return; }
+  const { error } = await sb.from('profiles').update({ bonus: val }).eq('id', userId);
+  if (error) { showToast('Error: ' + error.message); return; }
+  showToast('Bonus updated ✅'); loadUsers();
+}
+
+async function setTotalDeposit(userId) {
+  const val = parseFloat(document.getElementById(`deposit_${userId}`).value);
+  if (isNaN(val)) { showToast('Enter a valid amount'); return; }
+  const { error } = await sb.from('profiles').update({ total_deposited: val }).eq('id', userId);
+  if (error) { showToast('Error: ' + error.message); return; }
+  showToast('Total deposit updated ✅'); loadUsers();
 }
 
 async function toggleVerify(userId, state) {
